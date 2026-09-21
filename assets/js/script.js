@@ -10,3 +10,6 @@ const hanakoKun = {
 };
 
 console.log(hanakoKun.info());
+
+const something = crypto.randomUUID();
+console.log(something);

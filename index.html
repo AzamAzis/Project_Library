@@ -17,9 +17,10 @@
 	<meta property="og:image:height" content="600">
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="book.url">
-	<link rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/reset.css">
+	<link rel="stylesheet" href="assets/css/styles.css">
 	<script src="script.js" defer></script>
-	<title>Project: Library</title>
+	<title>My Library</title>
 </head>
 <body>
 	<header class="header">
@@ -29,9 +30,6 @@
 	<main class="main">
 		<search class="search-container">
 			<form class="search" action="#" method="get">
-				<button class="__submit" type="submit">
-					<img src="assets/img/icon/search.svg" alt="search button">
-				</button>
 				<input
 					class="__input"
 					name="search"
@@ -40,30 +38,39 @@
 					maxlength="500"
 					placeholder="Toilet-bound Hanako-Kun"
 				>
+
+				<button class="__submit" type="submit">
+					<img src="assets/img/icon/search.svg" alt="search button">
+				</button>
 			</form>
 		</search>
 
 		<div>
 			<button
 				type="button"
-				popovertarget="add-book-dialog"
-				popovertargetaction="show"
+				commandfor="add-book-dialog"
+				command="show-modal"
 			>
 				Add A New Book
 			</button>
-			<dialog id="add-book-dialog" popover>
+			<dialog class="add-book-container" id="add-book-dialog">
 				<button
 					type="button"
 					aria-description="Click to close the modal"
-					popovertarget="add-book-dialog"
-					popovertargetaction="hide"
+					commandfor="add-book-dialog"
+					command="close"
 				>
 					<img src="assets/img/icon/close.svg" alt="Close">
 				</button>
-				<h3>Add The Book</h3>
-				<form action="#" method="dialog">
-					<label for="title">Title:</label>
+
+				<form class="add-book" action="#" method="dialog">
+					<h3>Add My Book</h3>
+					<label class="__text" for="cover">Cover</label>
+					<input class="__cover" id="cover" name="cover" type="file" accept="image/*">
+
+					<label class="__text" for="title">Title:</label>
 					<input
+						class="__title"
 						id="title"
 						name="title"
 						type="text"
@@ -74,8 +81,9 @@
 						required
 					>
 
-					<label for="vol">Vol:</label>
+					<label class="__text" for="vol">Vol:</label>
 					<input
+						class="__vol"
 						id="vol"
 						name="volume"
 						type="number"
@@ -84,8 +92,9 @@
 						step="1"
 					>
 
-					<label for="author">Author:</label>
+					<label class="__text" for="author">Author:</label>
 					<input
+						class="__author"
 						id="author"
 						name="author"
 						type="text"
@@ -94,8 +103,10 @@
 						placeholder="AidaIro"
 					>
 
-					<label for="link">Link:</label>
+					<label class="__text" for="link">Link:</label>
 					<input
+						class="__link"
+						id="link"
 						name="link"
 						type="url"
 						inputmode="url"
@@ -108,20 +119,37 @@
 			<button type="button">Update</button>
 		</div>
 
-		<div class="card-container">
-			<label class="card">
+		<div class="book-container">
+			<label class="book">
 				<input
 					class="__checkbox"
 					name="book"
 					type="checkbox"
 					aria-description="Click to select the book."
+					hidden
 				>
+
 				<img
 					class="__cover"
 					src="assets/img/book-cover/Hanako-cover.jpg"
 					alt="Toilet-bound Hanako-Kun Cover."
 				>
+
 				<h2 class="__title">Toilet-bound Hanako-Kun</h2>
+				<p class="__vol">Vol: 1</p>
+				<p class="__author">Author: AidaIro</p>
+				<p class="link-container">
+					link:
+					<a
+						class="__link"
+						href="https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback"
+						rel="noopener noreferrer"
+						target="__blank"
+					>
+						Visit me.
+					</a>
+				</p>
+
 				<div class="icon">
 					<input
 						class="__checkbox"
@@ -133,19 +161,36 @@
 				</div>
 			</label>
 
-			<label class="card">
+			<label class="book">
 				<input
 					class="__checkbox"
 					name="book"
 					type="checkbox"
 					aria-description="Click to select the book."
+					hidden
 				>
+
 				<img
 					class="__cover"
-					src="assets/img/book-cover/Made_in_Abyss-cover.jpg"
+					src="assets/img/book-cover/Made-in-Abyss-cover.jpg"
 					alt="Made in Abyss Cover."
 				>
+
 				<h2 class="__title">Made in Abyss</h2>
+				<p class="__vol">Vol: 1</p>
+				<p class="__author">Author: Akihito Tsukushi</p>
+				<p class="link-container">
+					Link:
+					<a
+						class="__link"
+						href="https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback"
+						rel="noopener noreferrer"
+						target="__blank"
+					>
+						Visit me
+					</a>
+				</p>
+
 				<div class="icon">
 					<input
 						class="__checkbox"
@@ -161,19 +206,35 @@
 				</div>
 			</label>
 
-			<label class="card">
+			<label class="book">
 				<input
 					class="__checkbox"
 					name="book"
 					type="checkbox"
 					aria-description="Click to select the book."
+					hidden
 				>
+
 				<img
 					class="__cover"
-					src="assets/img/book-cover/Asura-cover.jpg"
+					src="assets/img/book-cover/Asuras-Verdict-Cover.webp"
 					alt="Asura's Verdict Cover."
 				>
+
 				<h2 class="__title">Asura's Verdict</h2>
+				<p class="__vol">Vol: 1</p>
+				<p class="__author">Utsugi Unohana</p>
+				<p class="link-container">
+					<a
+						class="__link"
+						href="https://www.ebay.com/itm/396332939412"
+						rel="noopener noreferrer"
+						target="__blank"
+					>
+						Visit me.
+					</a>
+				</p>
+
 				<div class="icon">
 					<input
 						class="__checkbox"

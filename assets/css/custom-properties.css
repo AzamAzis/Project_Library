@@ -1,0 +1,38 @@
+:root {
+	/* **Font Size */
+	--text-sm: 0.75rem;
+	--text-md: 1rem;
+	--text-r: 1.25rem;
+	--text-lg: 1.5rem;
+	--text-xl: 1.75rem;
+	--text-xxl: 2.25rem;
+
+	/* **Color */
+	--text-black: #2b2d42;
+	--text-white: #f8f9fa;
+	--text--dark-blue: #072ac8;
+
+	/* **Background Color */
+	--bg-black: #2b2d42;
+	--bg-white: #f8f9fa;
+	--bg-dark-blue: #072ac8;
+	--bg-blue: #00a6fb;
+	--bg-light-blue: #4cc9f0;
+
+	/* **Space */
+	--space-xxs: 0.25em;
+	--space-xs: 0.50em;
+	--space-sm: 0.75em;
+	--space-md: 1em;
+	--space-r: 1.25em;
+	--space-lg: 1.50em;
+	--space-xl: 1.75em;
+	--space-xxl: 2.25em;
+
+	/* **Shadow */
+	--shadow-header: 0 0.25em 0.25em rgb(0 0 0 / 0.15);
+	--shadow-book: 0.31em 0.31em 0.25em rgb(0 0 0 / 0.1);
+
+	/* **Dark Mode */
+	color-scheme: light dark;
+}

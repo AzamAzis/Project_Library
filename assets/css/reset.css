@@ -1,0 +1,53 @@
+@import "custom-properties.css";
+@import "font.css";
+
+*,
+::before,
+::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: light-dark(var(--bg-white), var(--bg-black));
+	font: var(--text-md) / 1.5 "Funnel Display", sans-serif;
+	color: light-dark(var(--text-black), var(--text-white));
+}
+
+h1,
+h2,
+h3,
+p {
+	hyphens: auto;
+	overflow-wrap: break-word;
+	text-wrap-mode: wrap;
+	white-space: wrap;
+	word-break: break-word;
+}
+
+h1,
+h2,
+h3 {
+	text-wrap-style: pretty;
+}
+
+p {
+	text-wrap-style: balance;
+}
+
+button,
+input {
+	font: inherit;
+}
+
+button {
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+}
+
+img {
+	display: block;
+	width: 100%;
+	height: auto;
+}

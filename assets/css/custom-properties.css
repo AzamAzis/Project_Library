@@ -1,5 +1,7 @@
 :root {
 	/* **Font Size */
+	--text-xxs: 0.25rem;
+	--text-xs: 0.50rem;
 	--text-sm: 0.75rem;
 	--text-md: 1rem;
 	--text-r: 1.25rem;
@@ -8,16 +10,20 @@
 	--text-xxl: 2.25rem;
 
 	/* **Color */
+	--text-darker-01: #0d1b2a;
 	--text-black: #2b2d42;
+	--text-gray: #dee2e6;
+	--text-dark-gray: #adb5bd;
 	--text-white: #f8f9fa;
 	--text--dark-blue: #072ac8;
 
 	/* **Background Color */
+	--bg-darker-01: #0d1b2a;
 	--bg-black: #2b2d42;
 	--bg-white: #f8f9fa;
 	--bg-dark-blue: #072ac8;
-	--bg-blue: #00a6fb;
-	--bg-light-blue: #4cc9f0;
+	--bg-blue: #0d41e1;
+	--bg-light-blue: #2ec0f9;
 
 	/* **Space */
 	--space-xxs: 0.25em;
@@ -32,6 +38,10 @@
 	/* **Shadow */
 	--shadow-header: 0 0.25em 0.25em rgb(0 0 0 / 0.15);
 	--shadow-book: 0.31em 0.31em 0.25em rgb(0 0 0 / 0.1);
+
+	/* **Border */
+	--br-r: 0.4em;
+	--br-lg: 0.65em;
 
 	/* **Dark Mode */
 	color-scheme: light dark;

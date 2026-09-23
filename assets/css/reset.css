@@ -10,6 +10,7 @@
 }
 
 body {
+	position: relative;
 	background-color: light-dark(var(--bg-white), var(--bg-black));
 	font: var(--text-md) / 1.5 "Funnel Display", sans-serif;
 	color: light-dark(var(--text-black), var(--text-white));
@@ -37,16 +38,30 @@ p {
 }
 
 button,
+label {
+	cursor: pointer;
+}
+
+button,
 input {
 	font: inherit;
 }
 
 button {
+	background-color: transparent;
+	border: none;
 	-webkit-tap-highlight-color: transparent;
 	user-select: none;
 }
 
-img {
+input {
+	padding-block: var(--space-md);
+	padding-inline: var(--space-sm);
+	outline: none;
+}
+
+img,
+svg {
 	display: block;
 	width: 100%;
 	height: auto;

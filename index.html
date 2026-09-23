@@ -17,7 +17,6 @@
 	<meta property="og:image:height" content="600">
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="book.url">
-	<link rel="stylesheet" href="assets/css/reset.css">
 	<link rel="stylesheet" href="assets/css/styles.css">
 	<script src="script.js" defer></script>
 	<title>My Library</title>
@@ -31,7 +30,7 @@
 		<search class="search-container">
 			<form class="search" action="#" method="get">
 				<input
-					class="__input"
+					class="__input __search"
 					name="search"
 					type="search"
 					inputmode="search"
@@ -39,85 +38,118 @@
 					placeholder="Toilet-bound Hanako-Kun"
 				>
 
-				<button class="__submit" type="submit">
-					<img src="assets/img/icon/search.svg" alt="search button">
+				<button class="__clear" type="button" aria-label="clear">
+					<svg
+						class="__img"
+						xmlns="http://www.w3.org/2000/svg"
+						aria-hidden="true"
+						height="24px"
+						viewBox="0 -960 960 960"
+						width="24px"
+						fill="#000000"
+					>
+						<path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+					</svg>
+				</button>
+
+				<button class="__submit" type="submit" aria-label="Search button.">
+					<svg
+						class="__img"
+						xmlns="http://www.w3.org/2000/svg"
+						aria-hidden="true"
+						height="24px"
+						viewBox="0 -960 960 960"
+						width="24px"
+						fill="#000"
+					>
+						<path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+					</svg>
 				</button>
 			</form>
 		</search>
 
-		<div>
+		<div class="button-container">
 			<button
+				class="book-btn"
 				type="button"
 				commandfor="add-book-dialog"
 				command="show-modal"
 			>
 				Add A New Book
 			</button>
-			<dialog class="add-book-container" id="add-book-dialog">
-				<button
-					type="button"
-					aria-description="Click to close the modal"
-					commandfor="add-book-dialog"
-					command="close"
-				>
-					<img src="assets/img/icon/close.svg" alt="Close">
-				</button>
 
-				<form class="add-book" action="#" method="dialog">
-					<h3>Add My Book</h3>
-					<label class="__text" for="cover">Cover</label>
-					<input class="__cover" id="cover" name="cover" type="file" accept="image/*">
-
-					<label class="__text" for="title">Title:</label>
-					<input
-						class="__title"
-						id="title"
-						name="title"
-						type="text"
-						inputmode="text"
-						maxlength="500"
-						placeholder="Toilet-bound Hanako-Kun"
-						autofocus
-						required
-					>
-
-					<label class="__text" for="vol">Vol:</label>
-					<input
-						class="__vol"
-						id="vol"
-						name="volume"
-						type="number"
-						inputmode="decimal"
-						placeholder="1"
-						step="1"
-					>
-
-					<label class="__text" for="author">Author:</label>
-					<input
-						class="__author"
-						id="author"
-						name="author"
-						type="text"
-						inputmode="text"
-						maxlength="500"
-						placeholder="AidaIro"
-					>
-
-					<label class="__text" for="link">Link:</label>
-					<input
-						class="__link"
-						id="link"
-						name="link"
-						type="url"
-						inputmode="url"
-						placeholder="https://example-book.com"
-					>
-
-					<button type="submit" value="save">Save</button>
-				</form>
-			</dialog>
-			<button type="button">Update</button>
+			<button class="book-btn update" type="button">Update</button>
 		</div>
+
+	<dialog class="add-book" id="add-book-dialog">
+		<button
+			class="__close"
+			type="button"
+			aria-description="Click to close the modal"
+			commandfor="add-book-dialog"
+			command="close"
+		>
+			<svg
+				class="__img"
+				xmlns="http://www.w3.org/2000/svg"
+				aria-hidden="true"
+				height="24px"
+				viewBox="0 -960 960 960"
+				width="24px"
+				fill="#000000"
+			>
+				<path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+			</svg>
+		</button>
+
+		<form class="__form" action="#" method="dialog" novalidate>
+			<h3 class="__form-title">Add My Book</h3>
+			<label class="__text" for="cover">Cover:</label>
+			<input class="__cover" id="cover" name="cover" type="file" accept="image/*">
+			<label class="__text" for="title">Title:</label>
+			<input
+				class="__input __title"
+				id="title"
+				name="title"
+				type="text"
+				inputmode="text"
+				maxlength="500"
+				placeholder="Toilet-bound Hanako-Kun"
+				autofocus
+				required
+			>
+			<label class="__text" for="vol">Vol:</label>
+			<input
+				class="__input __vol"
+				id="vol"
+				name="volume"
+				type="number"
+				inputmode="decimal"
+				placeholder="1"
+				step="1"
+			>
+			<label class="__text" for="author">Author:</label>
+			<input
+				class="__input __author"
+				id="author"
+				name="author"
+				type="text"
+				inputmode="text"
+				maxlength="500"
+				placeholder="AidaIro"
+			>
+			<label class="__text" for="link">Link:</label>
+			<input
+				class="__input __link"
+				id="link"
+				name="link"
+				type="url"
+				inputmode="url"
+				placeholder="https://example-book.com"
+			>
+			<button type="submit" value="save">Save</button>
+		</form>
+	</dialog>
 
 		<div class="book-container">
 			<label class="book">

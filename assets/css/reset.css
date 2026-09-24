@@ -50,7 +50,6 @@ input {
 button {
 	background-color: transparent;
 	border: none;
-	-webkit-tap-highlight-color: transparent;
 	user-select: none;
 }
 
@@ -65,4 +64,12 @@ svg {
 	display: block;
 	width: 100%;
 	height: auto;
+}
+
+ul {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
 }

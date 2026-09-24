@@ -70,7 +70,7 @@
 
 		<div class="button-container">
 			<button
-				class="book-btn"
+				class="btn add"
 				type="button"
 				commandfor="add-book-dialog"
 				command="show-modal"
@@ -78,7 +78,7 @@
 				Add A New Book
 			</button>
 
-			<button class="book-btn update" type="button">Update</button>
+			<button class="btn update" type="button">Update</button>
 		</div>
 
 	<dialog class="add-book" id="add-book-dialog">
@@ -105,6 +105,7 @@
 		<form class="__form" action="#" method="dialog" novalidate>
 			<h3 class="__form-title">Add My Book</h3>
 			<label class="__text" for="cover">Cover:</label>
+			<label class="btn __upload" for="cover" tabindex="0">Upload a cover</label>
 			<input class="__cover" id="cover" name="cover" type="file" accept="image/*">
 			<label class="__text" for="title">Title:</label>
 			<input
@@ -147,12 +148,12 @@
 				inputmode="url"
 				placeholder="https://example-book.com"
 			>
-			<button type="submit" value="save">Save</button>
+			<button class="btn __save" type="submit" value="save">Save</button>
 		</form>
 	</dialog>
 
 		<div class="book-container">
-			<label class="book">
+			<div class="book">
 				<input
 					class="__checkbox"
 					name="book"
@@ -168,32 +169,24 @@
 				>
 
 				<h2 class="__title">Toilet-bound Hanako-Kun</h2>
-				<p class="__vol">Vol: 1</p>
-				<p class="__author">Author: AidaIro</p>
-				<p class="link-container">
-					link:
-					<a
-						class="__link"
-						href="https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback"
-						rel="noopener noreferrer"
-						target="__blank"
-					>
-						Visit me.
-					</a>
-				</p>
+				<ul class="__detail">
+					<li class="__vol">Vol: 1</li>
+					<li class="__author">Author: AidaIro</li>
+					<li class="link-container">
+						link:
+						<a
+							class="__link"
+							href="https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback"
+							rel="noopener noreferrer"
+							target="__blank"
+						>
+							Visit me.
+						</a>
+					</li>
+				</ul>
+			</div>
 
-				<div class="icon">
-					<input
-						class="__checkbox"
-						name="book"
-						type="checkbox"
-						aria-description="Click to add to favorite."
-					>
-					<img class="__favorite" src="assets/img/icon/star-plus.svg" alt="Add to favorite">
-				</div>
-			</label>
-
-			<label class="book">
+			<div class="book">
 				<input
 					class="__checkbox"
 					name="book"
@@ -209,36 +202,24 @@
 				>
 
 				<h2 class="__title">Made in Abyss</h2>
-				<p class="__vol">Vol: 1</p>
-				<p class="__author">Author: Akihito Tsukushi</p>
-				<p class="link-container">
-					Link:
-					<a
-						class="__link"
-						href="https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback"
-						rel="noopener noreferrer"
-						target="__blank"
-					>
-						Visit me
-					</a>
-				</p>
+				<ul class="__detail">
+					<li class="__vol">Vol: 1</li>
+					<li class="__author">Author: Akihito Tsukushi</li>
+					<li class="link-container">
+						Link:
+						<a
+							class="__link"
+							href="https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback"
+							rel="noopener noreferrer"
+							target="__blank"
+						>
+							Visit me
+						</a>
+					</li>
+				</ul>
+			</div>
 
-				<div class="icon">
-					<input
-						class="__checkbox"
-						name="book"
-						type="checkbox"
-						aria-description="Click to add to favorite."
-					>
-					<img
-						class="__favorite"
-						src="assets/img/icon/star-plus.svg"
-						alt="Add to favorite"
-					>
-				</div>
-			</label>
-
-			<label class="book">
+			<div class="book">
 				<input
 					class="__checkbox"
 					name="book"
@@ -254,39 +235,38 @@
 				>
 
 				<h2 class="__title">Asura's Verdict</h2>
-				<p class="__vol">Vol: 1</p>
-				<p class="__author">Utsugi Unohana</p>
-				<p class="link-container">
-					<a
-						class="__link"
-						href="https://www.ebay.com/itm/396332939412"
-						rel="noopener noreferrer"
-						target="__blank"
-					>
-						Visit me.
-					</a>
-				</p>
-
-				<div class="icon">
-					<input
-						class="__checkbox"
-						type="checkbox"
-						aria-description="Click to add to favorite."
-					>
-					<img
-						class="__favorite"
-						src="assets/img/icon/star-plus.svg"
-						alt="Add to favorite"
-					>
-				</div>
-			</label>
+				<ul class="__detail">
+					<li class="__vol">Vol: 1</li>
+					<li class="__author">Author: Utsugi Unohana</li>
+					<li class="link-container">
+						Link:
+						<a
+							class="__link"
+							href="https://www.ebay.com/itm/396332939412"
+							rel="noopener noreferrer"
+							target="__blank"
+						>
+							Visit me.
+						</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</main>
 
-	<footer>
-		<p>
-			<img src="#" alt="">
-			<small>Azam Azis's Book Collection</small>
+	<footer class="footer-container">
+		<p class="footer">
+			<img class="profile" src="https://avatars.githubusercontent.com/u/143481447?v=4" alt="Azam Azis's github profile">
+			<small class="__text">Created By
+				<a
+					class="__link"
+					href="https://github.com/AzamAzis"
+					rel="noopener noreferrer"
+					target="__blank"
+				>
+					Azam Azis
+				</a>
+			</small>
 		</p>
 	</footer>
 </body>

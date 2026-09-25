@@ -51,6 +51,7 @@ button {
 	background-color: transparent;
 	border: none;
 	user-select: none;
+	-webkit-tap-highlight-color: transparent;
 }
 
 input {

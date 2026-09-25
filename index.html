@@ -52,7 +52,7 @@
 					</svg>
 				</button>
 
-				<button class="__submit" type="submit" aria-label="Search button.">
+				<button class="__search-btn" type="submit" aria-label="Search button.">
 					<svg
 						class="__img"
 						xmlns="http://www.w3.org/2000/svg"
@@ -81,7 +81,7 @@
 			<button class="btn update" type="button">Update</button>
 		</div>
 
-	<dialog class="add-book" id="add-book-dialog">
+	<dialog class="add-book-modal" id="add-book-dialog">
 		<button
 			class="__close"
 			type="button"
@@ -148,6 +148,10 @@
 				inputmode="url"
 				placeholder="https://example-book.com"
 			>
+			<div class="__mark">
+				<input class="__read-check" id="read" type="checkbox">
+				<label class="__text" for="read">Mark as read.</label>
+			</div>
 			<button class="btn __save" type="submit" value="save">Save</button>
 		</form>
 	</dialog>
@@ -166,6 +170,7 @@
 					class="__cover"
 					src="assets/img/book-cover/Hanako-cover.jpg"
 					alt="Toilet-bound Hanako-Kun Cover."
+					loading="lazy"
 				>
 
 				<h2 class="__title">Toilet-bound Hanako-Kun</h2>
@@ -184,6 +189,10 @@
 						</a>
 					</li>
 				</ul>
+				<div class="__mark">
+					<input class="__read-check" id="read-01" type="checkbox">
+					<label class="__text" for="read-01">Mark as read.</label>
+				</div>
 			</div>
 
 			<div class="book">
@@ -199,6 +208,7 @@
 					class="__cover"
 					src="assets/img/book-cover/Made-in-Abyss-cover.jpg"
 					alt="Made in Abyss Cover."
+					loading="lazy"
 				>
 
 				<h2 class="__title">Made in Abyss</h2>
@@ -213,10 +223,14 @@
 							rel="noopener noreferrer"
 							target="__blank"
 						>
-							Visit me
+							Visit me.
 						</a>
 					</li>
 				</ul>
+				<div class="__mark">
+					<input class="__read-check" id="read-02" type="checkbox">
+					<label class="__text" for="read-02">Marks as read.</label>
+				</div>
 			</div>
 
 			<div class="book">
@@ -232,6 +246,7 @@
 					class="__cover"
 					src="assets/img/book-cover/Asuras-Verdict-Cover.webp"
 					alt="Asura's Verdict Cover."
+					loading="lazy"
 				>
 
 				<h2 class="__title">Asura's Verdict</h2>
@@ -250,13 +265,22 @@
 						</a>
 					</li>
 				</ul>
+				<div class="__mark">
+					<input class="__read-check" id="read-03" type="checkbox">
+					<label class="__text" for="read-03">Marks as read.</label>
+				</div>
 			</div>
 		</div>
 	</main>
 
 	<footer class="footer-container">
 		<p class="footer">
-			<img class="profile" src="https://avatars.githubusercontent.com/u/143481447?v=4" alt="Azam Azis's github profile">
+			<img
+				class="profile"
+				src="https://avatars.githubusercontent.com/u/143481447?v=4"
+				alt="Azam Azis's github profile"
+				loading="lazy"
+			>
 			<small class="__text">Created By
 				<a
 					class="__link"

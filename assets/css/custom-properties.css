@@ -15,7 +15,11 @@
 	--text-gray: #dee2e6;
 	--text-dark-gray: #adb5bd;
 	--text-white: #f8f9fa;
-	--text--dark-blue: #072ac8;
+	--text-dark-blue: #072ac8;
+	--text-red: #e01e37;
+	--text-dark-red: #bf0603;
+	--text-green: #16db65;
+	--text-dark-green: #3e8914;
 
 	/* **Background Color */
 	--bg-darker-01: #0d1b2a;

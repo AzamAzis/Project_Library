@@ -11,7 +11,10 @@
 
 body {
 	position: relative;
+	display: flex;
+	flex-direction: column;
 	background-color: light-dark(var(--bg-white), var(--bg-black));
+	min-height: 100dvh;
 	font: var(--text-md) / 1.5 "Funnel Display", sans-serif;
 	color: light-dark(var(--text-black), var(--text-white));
 }
@@ -22,7 +25,6 @@ h3,
 p {
 	hyphens: auto;
 	overflow-wrap: break-word;
-	text-wrap-mode: wrap;
 	white-space: wrap;
 	word-break: break-word;
 }
@@ -73,4 +75,8 @@ ul {
 
 a {
 	text-decoration: none;
+}
+
+footer {
+	margin-block-start: auto;
 }

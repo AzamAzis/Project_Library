@@ -256,6 +256,8 @@ vertical-align: top;
 	margin-inline: auto;
 	padding-inline: var(--space-sm);
 	max-width: 70rem;
+	will-change: height;
+	transition: height 0.3s ease-in;
 }
 
 .book {
@@ -408,4 +410,8 @@ vertical-align: top;
 /* ||JAVASCRIPT CSS UTILITY */
 .hidden {
 	display: none;
+}
+
+.overflow-hidden {
+	overflow: hidden;
 }

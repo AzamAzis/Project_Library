@@ -81,7 +81,150 @@
 			<button class="btn update" type="button">Update</button>
 		</div>
 
-	<dialog class="add-book-modal" id="add-book-dialog">
+		<div class="book-container">
+			<div class="book one">
+				<input
+					class="__checkbox"
+					name="book"
+					type="checkbox"
+					aria-description="Click to select the book."
+					hidden
+				>
+
+				<img
+					class="__cover"
+					src="assets/img/book-cover/Hanako-cover.jpg"
+					alt="Toilet-bound Hanako-Kun Cover."
+					loading="lazy"
+				>
+
+				<h2 class="__title">Toilet-bound Hanako-Kun</h2>
+				<ul class="__detail">
+					<li class="__vol">Vol: 1</li>
+					<li class="__author">Author: AidaIro</li>
+					<li class="link-container">
+						link:
+						<a
+							class="__link"
+							href="https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback"
+							rel="noopener noreferrer"
+							target="__blank"
+						>
+							Visit me.
+						</a>
+					</li>
+				</ul>
+				<div class="__mark">
+					<input class="__read-check" id="read-01" type="checkbox">
+					<label class="__text" for="read-01">Mark as read.</label>
+				</div>
+				<button class="btn __edit" type="button">Edit</button>
+			</div>
+
+			<div class="book two">
+				<input
+					class="__checkbox"
+					name="book"
+					type="checkbox"
+					aria-description="Click to select the book."
+					hidden
+				>
+
+				<img
+					class="__cover"
+					src="assets/img/book-cover/Made-in-Abyss-cover.jpg"
+					alt="Made in Abyss Cover."
+					loading="lazy"
+				>
+
+				<h2 class="__title">Made in Abyss</h2>
+				<ul class="__detail">
+					<li class="__vol">Vol: 1</li>
+					<li class="__author">Author: Akihito Tsukushi</li>
+					<li class="link-container">
+						Link:
+						<a
+							class="__link"
+							href="https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback"
+							rel="noopener noreferrer"
+							target="__blank"
+						>
+							Visit me.
+						</a>
+					</li>
+				</ul>
+				<div class="__mark">
+					<input class="__read-check" id="read-02" type="checkbox">
+					<label class="__text" for="read-02">Marks as read.</label>
+				</div>
+				<button class="btn __edit" type="button">Edit</button>
+			</div>
+
+			<div class="book three">
+				<input
+					class="__checkbox"
+					name="book"
+					type="checkbox"
+					aria-description="Click to select the book."
+					hidden
+				>
+
+				<img
+					class="__cover"
+					src="assets/img/book-cover/Asuras-Verdict-Cover.webp"
+					alt="Asura's Verdict Cover."
+					loading="lazy"
+				>
+
+				<h2 class="__title">Asura's Verdict</h2>
+				<ul class="__detail">
+					<li class="__vol">Vol: 1</li>
+					<li class="__author">Author: Utsugi Unohana</li>
+					<li class="link-container">
+						Link:
+						<a
+							class="__link"
+							href="https://www.ebay.com/itm/396332939412"
+							rel="noopener noreferrer"
+							target="__blank"
+						>
+							Visit me.
+						</a>
+					</li>
+				</ul>
+				<div class="__mark">
+					<input class="__read-check" id="read-03" type="checkbox">
+					<label class="__text" for="read-03">Marks as read.</label>
+				</div>
+				<button class="btn __edit" type="button">Edit</button>
+			</div>
+		</div>
+
+		<button class="btn show-more hidden" type="button">Show More</button>
+	</main>
+
+	<footer class="footer-container">
+		<p class="footer">
+			<img
+				class="profile"
+				src="https://avatars.githubusercontent.com/u/143481447?v=4"
+				alt="Azam Azis's github profile"
+				loading="lazy"
+			>
+			<small class="__text">Created By
+				<a
+					class="__link"
+					href="https://github.com/AzamAzis"
+					rel="noopener noreferrer"
+					target="__blank"
+				>
+					Azam Azis
+				</a>
+			</small>
+		</p>
+	</footer>
+
+		<dialog class="add-book-modal" id="add-book-dialog">
 		<button
 			class="__close"
 			type="button"
@@ -155,148 +298,5 @@
 			<button class="btn __save" type="submit" value="save">Save</button>
 		</form>
 	</dialog>
-
-		<div class="book-container">
-			<div class="book">
-				<input
-					class="__checkbox"
-					name="book"
-					type="checkbox"
-					aria-description="Click to select the book."
-					hidden
-				>
-
-				<img
-					class="__cover"
-					src="assets/img/book-cover/Hanako-cover.jpg"
-					alt="Toilet-bound Hanako-Kun Cover."
-					loading="lazy"
-				>
-
-				<h2 class="__title">Toilet-bound Hanako-Kun</h2>
-				<ul class="__detail">
-					<li class="__vol">Vol: 1</li>
-					<li class="__author">Author: AidaIro</li>
-					<li class="link-container">
-						link:
-						<a
-							class="__link"
-							href="https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback"
-							rel="noopener noreferrer"
-							target="__blank"
-						>
-							Visit me.
-						</a>
-					</li>
-				</ul>
-				<div class="__mark">
-					<input class="__read-check" id="read-01" type="checkbox">
-					<label class="__text" for="read-01">Mark as read.</label>
-				</div>
-				<button class="btn __edit" type="button">Edit</button>
-			</div>
-
-			<div class="book">
-				<input
-					class="__checkbox"
-					name="book"
-					type="checkbox"
-					aria-description="Click to select the book."
-					hidden
-				>
-
-				<img
-					class="__cover"
-					src="assets/img/book-cover/Made-in-Abyss-cover.jpg"
-					alt="Made in Abyss Cover."
-					loading="lazy"
-				>
-
-				<h2 class="__title">Made in Abyss</h2>
-				<ul class="__detail">
-					<li class="__vol">Vol: 1</li>
-					<li class="__author">Author: Akihito Tsukushi</li>
-					<li class="link-container">
-						Link:
-						<a
-							class="__link"
-							href="https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback"
-							rel="noopener noreferrer"
-							target="__blank"
-						>
-							Visit me.
-						</a>
-					</li>
-				</ul>
-				<div class="__mark">
-					<input class="__read-check" id="read-02" type="checkbox">
-					<label class="__text" for="read-02">Marks as read.</label>
-				</div>
-				<button class="btn __edit" type="button">Edit</button>
-			</div>
-
-			<div class="book">
-				<input
-					class="__checkbox"
-					name="book"
-					type="checkbox"
-					aria-description="Click to select the book."
-					hidden
-				>
-
-				<img
-					class="__cover"
-					src="assets/img/book-cover/Asuras-Verdict-Cover.webp"
-					alt="Asura's Verdict Cover."
-					loading="lazy"
-				>
-
-				<h2 class="__title">Asura's Verdict</h2>
-				<ul class="__detail">
-					<li class="__vol">Vol: 1</li>
-					<li class="__author">Author: Utsugi Unohana</li>
-					<li class="link-container">
-						Link:
-						<a
-							class="__link"
-							href="https://www.ebay.com/itm/396332939412"
-							rel="noopener noreferrer"
-							target="__blank"
-						>
-							Visit me.
-						</a>
-					</li>
-				</ul>
-				<div class="__mark">
-					<input class="__read-check" id="read-03" type="checkbox">
-					<label class="__text" for="read-03">Marks as read.</label>
-				</div>
-				<button class="btn __edit" type="button">Edit</button>
-			</div>
-		</div>
-
-		<button class="btn show-more" type="button">Show More</button>
-	</main>
-
-	<footer class="footer-container">
-		<p class="footer">
-			<img
-				class="profile"
-				src="https://avatars.githubusercontent.com/u/143481447?v=4"
-				alt="Azam Azis's github profile"
-				loading="lazy"
-			>
-			<small class="__text">Created By
-				<a
-					class="__link"
-					href="https://github.com/AzamAzis"
-					rel="noopener noreferrer"
-					target="__blank"
-				>
-					Azam Azis
-				</a>
-			</small>
-		</p>
-	</footer>
 </body>
 </html>

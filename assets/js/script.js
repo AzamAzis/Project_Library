@@ -1,132 +1,138 @@
-const hanakoKun = {
-	title: "Toilet Bound Hanako Kun",
-	author: "AidaIro",
-	pages: 131,
-	read: "it's read",
-
-	info: function() {
-		return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read}`;
-	},
-};
-
-// console.log(hanakoKun.info());
-
-const something = crypto.randomUUID();
-// console.log(something);
-
-// ||BOOK OVERFLOW TRANSITION
 const bookContainer = document.querySelector(".book-container");
 const books = bookContainer.querySelectorAll(".book");
-const showMore = document.querySelector(".show-more");
+const showMoreBtn = document.querySelector(".show-more");
+const screen = window.matchMedia("(width < 680px)");
 
 const bookItems = Array.from(books);
-const savedBookIds = [];
+const savedBookId = [];
 
-const allBookHeights = [];
-let totalBookHeight;
+let initialDisplay = 0;
+let nextDisplay = 1;
+let isRemoved = true;
+
+const next = getNextBook(initialDisplay, nextDisplay);
+const bookContainerGap = Number.parseFloat(getComputedStyle(bookContainer).gap);
+const initialBookHeight = getBookHeight(next);
+let initialBookContainerHeight = getBookContainerHeight(initialBookHeight, bookContainerGap);
 
 bookItems.forEach((item) => {
-	const bookId = crypto.randomUUID();//**BOOK ID */
-	item.id = bookId;
-	savedBookIds.push(item.id);
-
-	allBookHeights.push(getHeight(item));
+	const id = crypto.randomUUID();
+	item.id = id;
+	savedBookId.push(item.id);
 });
 
-const bookContainerGap = parseFloat(getGap(bookContainer));
+toResponsive();
+screen.addEventListener("change", toResponsive);
 
-let columnLength = bookContainerColumnLength();
+showMoreBtn.addEventListener("click", showMore);
 
-toggleShowMoreBtn(columnLength);
-overflowHide(columnLength);
+// ||FUNCTIONS
+function toResponsive() {
+	const smallScreen = screen.matches;
 
-window.addEventListener("resize", () => { //**WINDOW RESIZE */
-	columnLength = bookContainerColumnLength();
-	toggleShowMoreBtn(columnLength);
-	overflowHide(columnLength);
-});
+	if (smallScreen) {
+		initialBookContainerHeight =
+			getBookContainerHeight(initialBookHeight, bookContainerGap)
+		;
+		initialDisplay = 0;
+		nextDisplay = 1;
+		if (isRemoved) {
+			showMoreBtn.textContent = "Show More";
+			isRemoved = false;
+		}
+		removeHidden(showMoreBtn);
+		setHeight(bookContainer, initialBookContainerHeight);
+		overflowHide(bookContainer);
+		hideBook();
+	} else {
+		addHidden(showMoreBtn);
+		unsetHeight(bookContainer);
+		overflowUnHide(bookContainer);
+		unHideBook();
+	}
+}
 
-let bookContainerHeight = getHeight(bookContainer);
-const increasePointHeight = getHeight(bookContainer);
-const maxHeight = savedBookIds.length * increasePointHeight;
-// !!CREATE NEXT
+function showMore() {
+	initialDisplay++;
+	nextDisplay++;
+	const nextBook = getNextBook(initialDisplay, nextDisplay);
+	if (nextDisplay <= savedBookId.length) {
+	removeHidden(nextBook[0]);
 
-showMore.addEventListener("click", () => { //**SHOW MORE or SHOW LESS BTN */
-	if (bookContainerHeight === maxHeight) {
-		bookItems.forEach((item) => {
-			bookContainer.style.height = `${getHeight(item) + bookContainerGap}px`;
-			bookContainerHeight = 0;
-		});
+	const height = getBookHeight(nextBook) + bookContainerGap;
+	initialBookContainerHeight += height;
+	setHeight(bookContainer, initialBookContainerHeight);
 	}
 
-	if (showMore.textContent === "Show Less") {
-		showMore.textContent = "Show More";
+	if (!isRemoved) {
+		bookContainer.removeEventListener("transitionend", hideBook);
+		isRemoved = true;
 	}
 
-	if (bookContainerHeight < maxHeight) {
-		bookContainerHeight += increasePointHeight;
-		bookContainer.style.height = `${bookContainerHeight}px`;
-		showMore.textContent = "Show More";
-	}
-
-	if (bookContainerHeight === maxHeight) {
-			showMore.textContent = "Show Less";
-	}
-});
-
-// **FUNCTIONS
-function bookContainerColumnLength() {
-	return getComputedStyle(bookContainer).gridTemplateColumns.split(" ").length;
-};
-
-function toggleShowMoreBtn(length) {
-	if (length > 1 || length < 1) {
-		showMore.classList.add("hidden");
+	if (nextDisplay === savedBookId.length) {
+		showMoreBtn.textContent = "Show Less";
 		return;
+	} else if (nextDisplay > savedBookId.length) {
+		showMoreBtn.textContent = "Show More";
+		initialDisplay = 0;
+		nextDisplay = 1;
+		initialBookContainerHeight =
+			getBookContainerHeight(initialBookHeight, bookContainerGap)
+		;
+		setHeight(bookContainer, initialBookContainerHeight);
+		bookContainer.addEventListener("transitionend", hideBook);
+		isRemoved = false;
 	}
-
-	showMore.classList.remove("hidden");
 }
 
-function getHeight(item) {
-	const height = item.getBoundingClientRect().height;
-	return height;
+function hideBook() {
+	bookItems.forEach((item, index, array) => {
+		if (array[index] === array[0]) return;
+		addHidden(item);
+	});
 }
 
-function getGap(item) {
-	const gap = getComputedStyle(item).gap;
-	return gap;
+function unHideBook() {
+	bookItems.forEach((item) => {
+		removeHidden(item);
+	});
 }
 
-function toHide(item) {
+function addHidden(item) {
 	item.classList.add("hidden");
 }
 
-function toVisible(item) {
+function removeHidden(item) {
 	item.classList.remove("hidden");
 }
 
-function overflowHide(length) {
-	bookItems.forEach((item, index, array) => {
-		// const bookHeight = getHeight(array[0]);
+function setHeight(item, height) {
+	item.style.height = `${height}px`;
+}
 
-		allBookHeights.reduce((x, y) => {
-			totalBookHeight = x + y;
-			return totalBookHeight;
-		});
+function unsetHeight(item) {
+	item.style.removeProperty("height");
+}
 
-		const averageBookHeight = totalBookHeight / savedBookIds.length;
-		if (length === 1) {
-			bookContainer.classList.add("overflow-hidden");
-			bookContainer.style.height = `${averageBookHeight + bookContainerGap}px`;
+function overflowHide(item) {
+	item.style.overflow = "hidden";
+}
 
-			if (!(array[0] === item)) {
-				array[index].classList.add("hidden");
-			}
-		} else {
-			bookContainer.classList.remove("overflow-hidden");
-			bookContainer.style.removeProperty("height");
-			array[index].classList.remove("hidden");
-		}
-	});
+function overflowUnHide(item) {
+	item.style.overflow = "visible";
+}
+
+function getNextBook(initialDisplay, nextDisplay) {
+	const storage = bookItems.slice(initialDisplay, nextDisplay);
+	return storage;
+}
+
+function getBookHeight(book) {
+	const bookHeight = book[0].getBoundingClientRect().height;
+	return bookHeight;
+}
+
+function getBookContainerHeight(value, gap) {
+	const height = value + gap;
+	return height;
 }

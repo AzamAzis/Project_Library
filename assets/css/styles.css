@@ -139,8 +139,8 @@
 	background-color: light-dark(var(--bg-white), var(--bg-darker-01));
 	border: none;
 	border-radius: var(--br-lg);
-	height: fit-content;
 	margin-inline: auto;
+	max-height: calc(100% - var(--space-lg));
 	overflow: auto;
 	padding: var(--space-sm);
 	scrollbar-width: none;

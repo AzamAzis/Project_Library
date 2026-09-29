@@ -6,14 +6,22 @@
 	<title>Document</title>
 </head>
 <body>
-	<button type="button" popovertarget="pop">click me</button>
-<dialog popover id="pop">
-  <p>Greetings, one and all!</p>
-  <form method="dialog">
-		<input type="text" required value="asasas">
-    <button type="submit" command="close" commandfor="pop">OK</button>
-  </form>
-</dialog>
+	<button type="button">button</button>
+	<button id="one" type="button">button</button>
+	<script>
+		const button = document.querySelector("button");
+		const one = document.getElementById("one");
+		let hi = 1;
+		button.addEventListener("click", (event) => {
+			console.log(event.target);
+		});
 
+		one.addEventListener("click", () => {
+			hi++;
+			button.removeEventListener("click", (event) => {
+				console.log(event.target);
+			})
+		});
+	</script>
 </body>
 </html>

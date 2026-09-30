@@ -18,7 +18,7 @@
 	--text-dark-blue: #072ac8;
 	--text-red: #e01e37;
 	--text-dark-red: #bf0603;
-	--text-green: #16db65;
+	--text-light-green: #16db65;
 	--text-dark-green: #3e8914;
 
 	/* **Background Color */
@@ -29,6 +29,7 @@
 	--bg-dark-blue: #072ac8;
 	--bg-blue: #1789fc;
 	--bg-light-blue: #2ec0f9;
+	--bg-green: #70e000;
 
 	/* **Space */
 	--space-xxs: 0.25em;
@@ -45,9 +46,14 @@
 	--shadow-book: 0.31em 0.31em 0.25em 0.06em rgba(0, 0, 0, 0.2);
 
 	/* **Border */
-	--br-r: 0.4em;
-	--br-lg: 0.65em;
+	--br-sm: 0.2rem;
+	--br-r: 0.4rem;
+	--br-lg: 0.65rem;
 
 	/* **Dark Mode */
 	color-scheme: light dark;
+
+	/* **STAR */
+	--star-check-black: url("../img/icon/star-check-black.svg");
+	--star-check-white: url("../img/icon/star-check-white.svg");
 }

@@ -3,6 +3,12 @@ const books = bookContainer.querySelectorAll(".book");
 const showMoreBtn = document.querySelector(".show-more");
 const screen = window.matchMedia("(width < 680px)");
 
+const preview = document.querySelector(".__preview");
+const previewText = preview.querySelector(".__preview-text");
+const imgInputs = document.querySelector(".__input-img");
+const fileReader = new FileReader();
+const cover = document.createElement("img");
+
 const bookItems = Array.from(books);
 const savedBookId = [];
 
@@ -21,10 +27,29 @@ bookItems.forEach((item) => {
 	savedBookId.push(item.id);
 });
 
+// ||RESPONSIVENESS
 toResponsive();
 screen.addEventListener("change", toResponsive);
 
 showMoreBtn.addEventListener("click", showMore);
+
+// ||ADD PREVIEW
+imgInputs.addEventListener("change", (event) => {
+	for (const file of event.currentTarget.files) {
+		
+
+		fileReader.addEventListener("load", (event) => {
+			cover.src = event.currentTarget.result;
+		});
+		fileReader.readAsDataURL(file);
+
+		cover.alt = file.name;
+		cover.classList.add("__img-cover", "img-size");
+		if (preview.firstElementChild) {
+			preview.firstElementChild.replaceWith(cover);
+		}
+	}
+});
 
 // ||FUNCTIONS
 function toResponsive() {

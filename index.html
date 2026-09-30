@@ -88,20 +88,19 @@
 					name="book"
 					type="checkbox"
 					aria-description="Click to select the book."
-					hidden
 				>
 
 				<img
-					class="__cover"
+					class="__cover img-size"
 					src="assets/img/book-cover/Hanako-cover.jpg"
 					alt="Toilet-bound Hanako-Kun Cover."
 					loading="lazy"
 				>
 
-				<h2 class="__title">Toilet-bound Hanako-Kun</h2>
+				<h2 class="__title overflow-hidden">Toilet-bound Hanako-Kun</h2>
 				<ul class="__detail">
-					<li class="__vol">Vol: 1</li>
-					<li class="__author">Author: AidaIro</li>
+					<li class="__vol overflow-hidden">Vol: 1</li>
+					<li class="__author overflow-hidden">Author: AidaIro</li>
 					<li class="link-container">
 						link:
 						<a
@@ -127,20 +126,19 @@
 					name="book"
 					type="checkbox"
 					aria-description="Click to select the book."
-					hidden
 				>
 
 				<img
-					class="__cover"
+					class="__cover img-size"
 					src="assets/img/book-cover/Made-in-Abyss-cover.jpg"
 					alt="Made in Abyss Cover."
 					loading="lazy"
 				>
 
-				<h2 class="__title">Made in Abyss</h2>
+				<h2 class="__title overflow-hidden">Made in Abyss</h2>
 				<ul class="__detail">
-					<li class="__vol">Vol: 1</li>
-					<li class="__author">Author: Akihito Tsukushi</li>
+					<li class="__vol overflow-hidden">Vol: 1</li>
+					<li class="__author overflow-hidden">Author: Akihito Tsukushi</li>
 					<li class="link-container">
 						Link:
 						<a
@@ -166,20 +164,19 @@
 					name="book"
 					type="checkbox"
 					aria-description="Click to select the book."
-					hidden
 				>
 
 				<img
-					class="__cover"
+					class="__cover img-size"
 					src="assets/img/book-cover/Asuras-Verdict-Cover.webp"
 					alt="Asura's Verdict Cover."
 					loading="lazy"
 				>
 
-				<h2 class="__title">Asura's Verdict</h2>
+				<h2 class="__title overflow-hidden">Asura's Verdict</h2>
 				<ul class="__detail">
-					<li class="__vol">Vol: 1</li>
-					<li class="__author">Author: Utsugi Unohana</li>
+					<li class="__vol overflow-hidden">Vol: 1</li>
+					<li class="__author overflow-hidden">Author: Utsugi Unohana</li>
 					<li class="link-container">
 						Link:
 						<a
@@ -248,8 +245,11 @@
 		<form class="__form" action="#" method="dialog" novalidate>
 			<h3 class="__form-title">Add My Book</h3>
 			<label class="__text" for="cover">Cover:</label>
+			<input class="__cover __input-img hidden" id="cover" name="cover" type="file" accept="image/*">
+			<div class="__preview">
+				<p class="__preview-text">Preview</p>
+			</div>
 			<label class="btn __upload" for="cover" tabindex="0">Upload a cover</label>
-			<input class="__cover" id="cover" name="cover" type="file" accept="image/*">
 			<label class="__text" for="title">Title:</label>
 			<input
 				class="__input __title"
@@ -293,7 +293,7 @@
 			>
 			<div class="__mark">
 				<input class="__read-check" id="read" type="checkbox">
-				<label class="__text" for="read">Mark as read.</label>
+				<label class="__text .__mark" for="read">Mark as read.</label>
 			</div>
 			<button class="btn __save" type="submit" value="save">Save</button>
 		</form>

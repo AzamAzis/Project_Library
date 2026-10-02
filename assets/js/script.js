@@ -1,13 +1,22 @@
 const bookContainer = document.querySelector(".book-container");
 const books = bookContainer.querySelectorAll(".book");
 const showMoreBtn = document.querySelector(".show-more");
+const addBookModal = document.querySelector(".add-book-modal");
+const form = addBookModal.querySelector(".__form");
+const titleInput = addBookModal.querySelector(".__title");
+const volInput = addBookModal.querySelector(".__vol");
+const authorInput = addBookModal.querySelector(".__author");
+const link = addBookModal.querySelector(".__link");
+const marked = addBookModal.querySelector(".__read-check");
+
 const screen = window.matchMedia("(width < 680px)");
 
 const preview = document.querySelector(".__preview");
-const previewText = preview.querySelector(".__preview-text");
 const imgInputs = document.querySelector(".__input-img");
 const fileReader = new FileReader();
 const cover = document.createElement("img");
+
+const saveBtn = document.querySelector(".__save");
 
 const bookItems = Array.from(books);
 const savedBookId = [];
@@ -22,9 +31,10 @@ const initialBookHeight = getBookHeight(next);
 let initialBookContainerHeight = getBookContainerHeight(initialBookHeight, bookContainerGap);
 
 bookItems.forEach((item) => {
-	const id = crypto.randomUUID();
+	const id = crypto.randomUUID(); //**GENERATE BOOK ID */
 	item.id = id;
-	savedBookId.push(item.id);
+
+	savedBookId.push(item.id); //**STORING BOOK ID */
 });
 
 // ||RESPONSIVENESS
@@ -36,20 +46,20 @@ showMoreBtn.addEventListener("click", showMore);
 // ||ADD PREVIEW
 imgInputs.addEventListener("change", (event) => {
 	for (const file of event.currentTarget.files) {
-		
-
-		fileReader.addEventListener("load", (event) => {
-			cover.src = event.currentTarget.result;
-		});
-		fileReader.readAsDataURL(file);
+		readImg(file, cover);
 
 		cover.alt = file.name;
 		cover.classList.add("__img-cover", "img-size");
+		cover.loading = "lazy";
 		if (preview.firstElementChild) {
 			preview.firstElementChild.replaceWith(cover);
 		}
 	}
 });
+
+// ||ADD BOOK
+saveBtn.addEventListener("click", addBook);
+
 
 // ||FUNCTIONS
 function toResponsive() {
@@ -160,4 +170,139 @@ function getBookHeight(book) {
 function getBookContainerHeight(value, gap) {
 	const height = value + gap;
 	return height;
+}
+
+function readImg(file, item) {
+	fileReader.addEventListener("load", (event) => {
+		item.src = event.currentTarget.result;
+	});
+
+	fileReader.readAsDataURL(file);
+}
+
+function addBook(event) {
+	event.preventDefault();
+	const newBook = document.createElement("li");
+	const checkbox = document.createElement("input");
+	const newCover = document.createElement("img");
+	const newTitle = document.createElement("h2");
+	const newDetail = document.createElement("ul");
+	const newVol = document.createElement("li");
+	const newAuthor = document.createElement("li");
+	const newLinkContainer = document.createElement("li");
+	const newLink = document.createElement("a");
+	const newMark = document.createElement("div");
+	const newReadCheckInput = document.createElement("input");
+	const newMarkLabel = document.createElement("label");
+	const randomId = crypto.randomUUID();
+
+	const isCoverExist = cover.getAttribute("src");
+	const isTitleExist = titleInput.value;
+	const isLinkExist = link.value;
+
+	if (!isTitleExist) {
+		addBookModal.show();
+		return;
+	} else {
+		addBookModal.close();
+	};
+
+	//##BOOK
+	newBook.classList.add("book");
+
+	// ##CHECKBOX
+	checkbox.classList.add("__checkbox");
+	checkbox.name = "book";
+	checkbox.type = "checkbox";
+	checkbox.ariaDescription = "Click to select the book.";
+
+	// ##COVER
+	newCover.classList.add("__cover", "img-size");
+	if (!isCoverExist) {
+		newCover.src = "assets/img/book-cover/placeholder-cover.jpg";
+		newCover.alt = "placeholder cover: Hanako-Kun Peace Sign";
+	} else {
+		newCover.src = cover.src;
+		newCover.alt = cover.alt;
+	}
+
+	// ##DETAIL
+	newDetail.classList.add("__detail");
+
+	// ##TITLE
+	createNewDetail(newTitle, titleInput, "__title", "overflow-hidden");
+
+	// ##VOL
+	createNewDetail(newVol, volInput, "__vol", "overflow-hidden");
+
+	// ##AUTHOR
+	createNewDetail(newAuthor, authorInput, "__author", "overflow-hidden");
+
+	// ##LINK CONTAINER
+	newLinkContainer.classList.add("link-container");
+	newLinkContainer.textContent = "Link: ";
+
+	// ##LINK
+	newLink.classList.add("__link");
+	newLink.rel = "noopener noreferrer";
+	newLink.target = "_blank";
+
+	if (!isLinkExist) {
+		newLink.textContent = "none";
+		newLink.removeAttribute("href");
+	} else {
+		newLink.textContent = "Visit me.";
+		newLink.href = link.value;
+	}
+
+	// ##MARK
+	newMark.classList.add("__mark");
+
+	// ##MARK INPUT
+	newReadCheckInput.classList.add("__read-check");
+	newReadCheckInput.id = randomId;
+	newReadCheckInput.type = "checkbox";
+	newReadCheckInput.checked = marked.checked;
+
+	// ##MARK LABEL
+	newMarkLabel.classList.add("__text", "__mark");
+	newMarkLabel.for = newReadCheckInput.id;
+	newMarkLabel.textContent = "Mark as read.";
+
+	// !!ADD TO LINK CONTAINER
+	newLinkContainer.appendChild(newLink);
+
+	// !!ADD TO MARK
+	newMark.append(newReadCheckInput, newMarkLabel);
+
+	// !!ADD TO DETAIL
+	newDetail.append(newTitle, newVol, newAuthor, newLinkContainer);
+
+	// !!ADD TO BOOK
+	newBook.append(checkbox, newCover, newTitle, newDetail, newMark);
+
+	if (bookItems.length <= 6) {
+		bookContainer.appendChild(newBook);
+	}
+
+	form.reset();
+}
+
+function createNewDetail(item, value, classDetail, ...utilities) {
+	const rawClass = classDetail.replaceAll(/__/g, "");
+	const detail =
+		rawClass.slice(0, 1).toLocaleUpperCase() + rawClass.slice(1)
+	;
+
+	const text = value.value ? value.value : "none";
+
+	if (detail.toLowerCase() === "title") {
+		item.textContent = text;
+	} else {
+		item.textContent = `${detail}: ${text}`;
+	}
+
+	for (const utility of utilities) {
+		item.classList.add(classDetail, utility);
+	}
 }

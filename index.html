@@ -23,6 +23,7 @@
 </head>
 <body>
 	<header class="header">
+		<div class="added hidden" id="added">Book has been added to your library.</div>
 		<h1 class="__title">My Library</h1>
 	</header>
 
@@ -81,8 +82,8 @@
 			<button class="btn update" type="button">Update</button>
 		</div>
 
-		<div class="book-container">
-			<div class="book one">
+		<ul class="book-container">
+			<li class="book one">
 				<input
 					class="__checkbox"
 					name="book"
@@ -107,7 +108,7 @@
 							class="__link"
 							href="https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback"
 							rel="noopener noreferrer"
-							target="__blank"
+							target="_blank"
 						>
 							Visit me.
 						</a>
@@ -118,9 +119,9 @@
 					<label class="__text" for="read-01">Mark as read.</label>
 				</div>
 				<button class="btn __edit" type="button">Edit</button>
-			</div>
+			</li>
 
-			<div class="book two">
+			<li class="book two">
 				<input
 					class="__checkbox"
 					name="book"
@@ -145,7 +146,7 @@
 							class="__link"
 							href="https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback"
 							rel="noopener noreferrer"
-							target="__blank"
+							target="_blank"
 						>
 							Visit me.
 						</a>
@@ -156,9 +157,9 @@
 					<label class="__text" for="read-02">Marks as read.</label>
 				</div>
 				<button class="btn __edit" type="button">Edit</button>
-			</div>
+			</li>
 
-			<div class="book three">
+			<li class="book three">
 				<input
 					class="__checkbox"
 					name="book"
@@ -183,7 +184,7 @@
 							class="__link"
 							href="https://www.ebay.com/itm/396332939412"
 							rel="noopener noreferrer"
-							target="__blank"
+							target="_blank"
 						>
 							Visit me.
 						</a>
@@ -194,8 +195,8 @@
 					<label class="__text" for="read-03">Marks as read.</label>
 				</div>
 				<button class="btn __edit" type="button">Edit</button>
-			</div>
-		</div>
+			</li>
+		</ul>
 
 		<button class="btn show-more hidden" type="button">Show More</button>
 	</main>
@@ -213,7 +214,7 @@
 					class="__link"
 					href="https://github.com/AzamAzis"
 					rel="noopener noreferrer"
-					target="__blank"
+					target="_blank"
 				>
 					Azam Azis
 				</a>
@@ -222,13 +223,13 @@
 	</footer>
 
 		<dialog class="add-book-modal" id="add-book-dialog">
-		<button
-			class="__close"
-			type="button"
-			aria-description="Click to close the modal"
-			commandfor="add-book-dialog"
-			command="close"
-		>
+			<button
+				class="__close"
+				type="button"
+				aria-description="Click to close the modal"
+				commandfor="add-book-dialog"
+				command="close"
+			>
 			<svg
 				class="__img"
 				xmlns="http://www.w3.org/2000/svg"
@@ -292,10 +293,10 @@
 				placeholder="https://example-book.com"
 			>
 			<div class="__mark">
-				<input class="__read-check" id="read" type="checkbox">
-				<label class="__text .__mark" for="read">Mark as read.</label>
+				<input class="__read-check" id="read-00" type="checkbox">
+				<label class="__text __mark" for="read-00">Mark as read.</label>
 			</div>
-			<button class="btn __save" type="submit" value="save">Save</button>
+			<button class="btn __save" type="submit" value="save" aria-describedby="added">Save</button>
 		</form>
 	</dialog>
 </body>

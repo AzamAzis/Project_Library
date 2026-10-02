@@ -8,12 +8,12 @@
 	</style>
 </head>
 <body>
+	
 	<script>
-		const p = document.querySelector("p");
-		p.textContent = "Hello ";
-		const alpha = document.createElement("a");
-		alpha.textContent = "Hi";
-		p.appendChild(alpha);
+		const label = document.createElement("label");
+		label.textContent = "Hello";
+		label.for = "Hello";
+		document.body.append(label);
 	</script>
 </body>
 </html>

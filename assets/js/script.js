@@ -12,7 +12,7 @@ const marked = addBookModal.querySelector(".__read-check");
 const screen = window.matchMedia("(width < 680px)");
 
 const preview = document.querySelector(".__preview");
-const imgInputs = document.querySelector(".__input-img");
+const imgInput = document.querySelector(".__input-img");
 const fileReader = new FileReader();
 const cover = document.createElement("img");
 
@@ -44,15 +44,15 @@ screen.addEventListener("change", toResponsive);
 showMoreBtn.addEventListener("click", showMore);
 
 // ||ADD PREVIEW
-imgInputs.addEventListener("change", (event) => {
+imgInput.addEventListener("change", (event) => {
 	for (const file of event.currentTarget.files) {
 		readImg(file, cover);
 
 		cover.alt = file.name;
 		cover.classList.add("__img-cover", "img-size");
 		cover.loading = "lazy";
-		if (preview.firstElementChild) {
-			preview.firstElementChild.replaceWith(cover);
+		if (preview.firstChild) {
+			preview.firstChild.replaceWith(cover);
 		}
 	}
 });
@@ -60,6 +60,45 @@ imgInputs.addEventListener("change", (event) => {
 // ||ADD BOOK
 saveBtn.addEventListener("click", addBook);
 
+// ||DROP COVER
+preview.addEventListener("drop", dropHandler);
+
+// ||PREVENT DROPPING FILES
+window.addEventListener("drop", (event) => {
+	if ([...event.dataTransfer.items].some((item) => item.kind === "file")) {
+		event.preventDefault();
+	}
+});
+
+// ||DRAGOVER
+preview.addEventListener("dragover", (event) => {
+	const fileItem =
+		[...event.dataTransfer.items].filter((item) => item.kind === "file")
+	;
+
+	if (fileItem.length > 0) {
+		event.preventDefault();
+		if (fileItem.some((item) => item.type.startsWith("image/"))) {
+			event.dataTransfer.dropEffect = "copy";
+		} else {
+			event.dataTransfer.dropEffect = "none";
+		}
+	}
+});
+
+window.addEventListener("dragover", (event) => {
+	const fileItems =
+		[...event.dataTransfer.items].filter((item) => item.kind === "file")
+	;
+
+	if (fileItems.length > 0) {
+		event.preventDefault();
+
+		if (!preview.contains(event.target)) {
+			event.dropEffect = "none";
+		}
+	}
+});
 
 // ||FUNCTIONS
 function toResponsive() {
@@ -201,7 +240,7 @@ function addBook(event) {
 	const isLinkExist = link.value;
 
 	if (!isTitleExist) {
-		addBookModal.show();
+		addBookModal.showModal();
 		return;
 	} else {
 		addBookModal.close();
@@ -266,7 +305,7 @@ function addBook(event) {
 
 	// ##MARK LABEL
 	newMarkLabel.classList.add("__text", "__mark");
-	newMarkLabel.for = newReadCheckInput.id;
+	newMarkLabel.setAttribute("for", newReadCheckInput.id);
 	newMarkLabel.textContent = "Mark as read.";
 
 	// !!ADD TO LINK CONTAINER
@@ -285,6 +324,8 @@ function addBook(event) {
 		bookContainer.appendChild(newBook);
 	}
 
+	preview.firstElementChild.remove();
+	preview.textContent = "Preview";
 	form.reset();
 }
 
@@ -305,4 +346,30 @@ function createNewDetail(item, value, classDetail, ...utilities) {
 	for (const utility of utilities) {
 		item.classList.add(classDetail, utility);
 	}
+}
+
+function displayImage(files) {
+	for (const file of files) {
+		if (file.type.startsWith("image/")) {
+			fileReader.addEventListener("load", (event) => {
+				cover.src = event.currentTarget.result;
+			});
+			fileReader.readAsDataURL(file);
+			cover.classList.add("__cover", "img-size");
+			cover.alt = file.name;
+			preview.firstChild.replaceWith(cover);
+		}
+	}
+}
+
+function dropHandler(ev) {
+	ev.preventDefault();
+	const file =
+		[...ev.dataTransfer.items]
+			.map((item) => item.getAsFile())
+			.filter((file) => file)
+	;
+	displayImage(file);
+
+	imgInput.files = ev.dataTransfer.files;
 }

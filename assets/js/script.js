@@ -2,6 +2,7 @@ const bookContainer = document.querySelector(".book-container");
 const books = bookContainer.querySelectorAll(".book");
 const showMoreBtn = document.querySelector(".show-more");
 const addBookModal = document.querySelector(".add-book-modal");
+const closeBtn = addBookModal.querySelector(".__close");
 const form = addBookModal.querySelector(".__form");
 const titleInput = addBookModal.querySelector(".__title");
 const volInput = addBookModal.querySelector(".__vol");
@@ -12,14 +13,19 @@ const marked = addBookModal.querySelector(".__read-check");
 const screen = window.matchMedia("(width < 680px)");
 
 const preview = document.querySelector(".__preview");
+const previewPrevChild = preview.firstElementChild;
 const imgInput = document.querySelector(".__input-img");
-const fileReader = new FileReader();
 const cover = document.createElement("img");
 
 const saveBtn = document.querySelector(".__save");
 
 const bookItems = Array.from(books);
 const savedBookId = [];
+
+// !!TEST
+let urlImg;
+let urlCover;
+// !!TEST
 
 let initialDisplay = 0;
 let nextDisplay = 1;
@@ -43,17 +49,19 @@ screen.addEventListener("change", toResponsive);
 
 showMoreBtn.addEventListener("click", showMore);
 
+// ||CLOSE DIALOG
+closeBtn.addEventListener("click", toClose);
+
+
 // ||ADD PREVIEW
 imgInput.addEventListener("change", (event) => {
 	for (const file of event.currentTarget.files) {
 		readImg(file, cover);
-
 		cover.alt = file.name;
 		cover.classList.add("__img-cover", "img-size");
-		cover.loading = "lazy";
-		if (preview.firstChild) {
-			preview.firstChild.replaceWith(cover);
-		}
+
+		previewPrevChild.remove();
+		preview.append(cover);
 	}
 });
 
@@ -95,7 +103,7 @@ window.addEventListener("dragover", (event) => {
 		event.preventDefault();
 
 		if (!preview.contains(event.target)) {
-			event.dropEffect = "none";
+			event.dataTransfer.dropEffect = "none";
 		}
 	}
 });
@@ -211,12 +219,15 @@ function getBookContainerHeight(value, gap) {
 	return height;
 }
 
-function readImg(file, item) {
-	fileReader.addEventListener("load", (event) => {
-		item.src = event.currentTarget.result;
-	});
 
-	fileReader.readAsDataURL(file);
+function readImg(file, item) {
+	if (urlImg) {
+		URL.revokeObjectURL(urlImg);
+	}
+
+	urlImg = URL.createObjectURL(file);
+
+	item.src = urlImg;
 }
 
 function addBook(event) {
@@ -263,6 +274,7 @@ function addBook(event) {
 	} else {
 		newCover.src = cover.src;
 		newCover.alt = cover.alt;
+		newCover.loading = "lazy";
 	}
 
 	// ##DETAIL
@@ -351,13 +363,15 @@ function createNewDetail(item, value, classDetail, ...utilities) {
 function displayImage(files) {
 	for (const file of files) {
 		if (file.type.startsWith("image/")) {
-			fileReader.addEventListener("load", (event) => {
-				cover.src = event.currentTarget.result;
-			});
-			fileReader.readAsDataURL(file);
+			if (urlImg) {
+				URL.revokeObjectURL(urlImg);
+			}
+			urlImg = URL.createObjectURL(file);
+			cover.src = urlImg;
 			cover.classList.add("__cover", "img-size");
 			cover.alt = file.name;
-			preview.firstChild.replaceWith(cover);
+			previewPrevChild.remove();
+			preview.appendChild(cover);
 		}
 	}
 }
@@ -372,4 +386,14 @@ function dropHandler(ev) {
 	displayImage(file);
 
 	imgInput.files = ev.dataTransfer.files;
+}
+
+function toClose(event) {
+	console.log(preview.firstElementChild === previewPrevChild);
+	if (preview.firstElementChild !== previewPrevChild) {
+		preview.firstElementChild.replaceWith(previewPrevChild);
+	}
+	if (!titleInput.value) {
+		form.reset();
+	}
 }

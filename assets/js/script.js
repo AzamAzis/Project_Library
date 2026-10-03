@@ -5,6 +5,7 @@ const addBookModal = document.querySelector(".add-book-modal");
 const closeBtn = addBookModal.querySelector(".__close");
 const form = addBookModal.querySelector(".__form");
 const titleInput = addBookModal.querySelector(".__title");
+const invalidMessage = addBookModal.querySelector(".__required");
 const volInput = addBookModal.querySelector(".__vol");
 const authorInput = addBookModal.querySelector(".__author");
 const link = addBookModal.querySelector(".__link");
@@ -64,6 +65,8 @@ imgInput.addEventListener("change", (event) => {
 		preview.append(cover);
 	}
 });
+
+titleInput.addEventListener("input", toValid);
 
 // ||ADD BOOK
 saveBtn.addEventListener("click", addBook);
@@ -252,6 +255,10 @@ function addBook(event) {
 
 	if (!isTitleExist) {
 		addBookModal.showModal();
+		invalidMessage.style.display = "block";
+		setTimeout(() => {
+			invalidMessage.classList.add("__message");
+		}, 0);
 		return;
 	} else {
 		addBookModal.close();
@@ -388,12 +395,32 @@ function dropHandler(ev) {
 	imgInput.files = ev.dataTransfer.files;
 }
 
-function toClose(event) {
-	console.log(preview.firstElementChild === previewPrevChild);
+function toClose() {
 	if (preview.firstElementChild !== previewPrevChild) {
 		preview.firstElementChild.replaceWith(previewPrevChild);
 	}
-	if (!titleInput.value) {
+
+	if (invalidMessage.classList.contains("__message")) {
+		invalidMessage.style.display = "none";
+		invalidMessage.classList.remove("__message");
+	}
+
+	if (titleInput.value) {
 		form.reset();
 	}
+
+	if (invalidMessage.classList.contains("__message")) {
+		invalidMessage.classList.remove("__message");
+	}
+}
+
+function toValid() {
+	if (titleInput.validity.valid && invalidMessage.classList.contains("__message")) {
+		invalidMessage.classList.remove("__message");
+		invalidMessage.addEventListener("transitionend", toRemoveMessage, {once: true});
+	}
+}
+
+function toRemoveMessage(e) {
+	e.currentTarget.style.display = "none";
 }

@@ -231,6 +231,19 @@
 		margin-inline: auto;
 	}
 
+	& .__required {
+		display: none;
+		align-self: start;
+		opacity: 0;
+		color: light-dark(var(--text-dark-red), var(--text-red));
+		will-change: opacity;
+		transition: opacity 0.5s ease-in;
+	}
+
+	& .__message {
+		opacity: 1;
+	}
+
 	& .__mark {
 		user-select: none;
 	}

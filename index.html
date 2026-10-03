@@ -243,7 +243,7 @@
 			</svg>
 		</button>
 
-		<form class="__form" action="#" method="dialog" novalidate>
+		<form class="__form" action="#" method="dialog">
 			<h3 class="__form-title">Add My Book</h3>
 			<label class="__text" for="cover">Cover:</label>
 			<input class="__cover __input-img hidden" id="cover" name="cover" type="file" accept="image/*">
@@ -257,12 +257,14 @@
 				id="title"
 				name="title"
 				type="text"
+				aria-describedby="required"
 				inputmode="text"
 				maxlength="500"
 				placeholder="Toilet-bound Hanako-Kun"
 				autofocus
 				required
 			>
+			<p class="__required" id="required">The book's title is required</p>
 			<label class="__text" for="vol">Vol:</label>
 			<input
 				class="__input __vol"

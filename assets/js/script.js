@@ -4,18 +4,18 @@ const showMoreBtn = document.querySelector(".show-more");
 const addBookModal = document.querySelector(".add-book-modal");
 const closeBtn = addBookModal.querySelector(".__close");
 const form = addBookModal.querySelector(".__form");
+const coverInput = addBookModal.querySelector(".__cover");
 const titleInput = addBookModal.querySelector(".__title");
 const invalidMessage = addBookModal.querySelector(".__required");
 const volInput = addBookModal.querySelector(".__vol");
 const authorInput = addBookModal.querySelector(".__author");
-const link = addBookModal.querySelector(".__link");
-const marked = addBookModal.querySelector(".__read-check");
+const linkInput = addBookModal.querySelector(".__link");
+const markAsReadInput = addBookModal.querySelector(".__read-check");
 
 const screen = window.matchMedia("(width < 680px)");
 
 const preview = document.querySelector(".__preview");
 const previewPrevChild = preview.firstElementChild;
-const imgInput = document.querySelector(".__input-img");
 const cover = document.createElement("img");
 
 const saveBtn = document.querySelector(".__save");
@@ -23,10 +23,40 @@ const saveBtn = document.querySelector(".__save");
 const bookItems = Array.from(books);
 const savedBookId = [];
 
-// !!TEST
+const bookOne = {
+	cover: "assets/img/book-cover/Hanako-cover.jpg",
+	title: "Toilet-bound Hanako-Kun",
+	vol: 1,
+	author: "AidaIro",
+	link: "https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback",
+	markAsRead: true,
+	id: crypto.randomUUID(),
+};
+
+const bookTwo = {
+	cover: "assets/img/book-cover/Made-in-Abyss-cover.jpg",
+	title: "Made in Abyss",
+	vol: 1,
+	author: "Akihito Tsukushi",
+	link: "https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback",
+	markAsRead: true,
+	id: crypto.randomUUID(),
+};
+
+const bookThree = {
+	cover: "assets/img/book-cover/Asuras-Verdict-Cover.webp",
+	title: "Asura's Verdict",
+	vol: 1,
+	author: "Utsugi Unohana",
+	link: "https://www.ebay.com/itm/396332939412",
+	markAsRead: true,
+	id: crypto.randomUUID(),
+}
+
+const myLibrary = [bookOne, bookTwo, bookThree];
+
 let urlImg;
-let urlCover;
-// !!TEST
+let coverImg;
 
 let initialDisplay = 0;
 let nextDisplay = 1;
@@ -50,18 +80,56 @@ screen.addEventListener("change", toResponsive);
 
 showMoreBtn.addEventListener("click", showMore);
 
+// ||DISPLAY CURRENT BOOKS
+for (const book of myLibrary) {
+	const newBookCard = document.createElement("li");
+	const newCheckbox = document.createElement("input");
+	const newCover = document.createElement("img");
+	const newTitle = document.createElement("h2");
+	const newDetail = document.createElement("ul");
+	const newVol = document.createElement("li");
+	const newAuthor = document.createElement("li");
+	const newLinkContainer = document.createElement("li");
+	const newLink = document.createElement("a");
+	const newMark = document.createElement("div");
+	const newReadCheck = document.createElement("input");
+	const newLabelReadCheck = document.createElement("label");
+	const newEdit = document.createElemenr("button");
+
+	// ##BOOK
+	newBookCard.classList.add("book");
+	newBookCard.id = book.id;
+	newBookCard.dataset.book = newBookCard.id;
+
+	// ##CHECKBOX
+	newCheckbox.classList.add("__checkbox");
+	newCheckbox.name = "book";
+	newCheckbox.type = "checkbox";
+	newCheckbox.ariaDescription = "Click to select the book.";
+
+	// ##COVER
+	newCover.classList.add("__cover", "img-size");
+	newCover.src = book.cover;
+	newCover.alt = `${book.title} cover`;
+	newCover.loading = "lazy";
+
+	// ##TITLE
+	newTitle.classList.add("__title", "overflow-hidden");
+	newTitle.textContent = book.title;
+}
+
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
 
 
 // ||ADD PREVIEW
-imgInput.addEventListener("change", (event) => {
+coverInput.addEventListener("change", (event) => {
 	for (const file of event.currentTarget.files) {
 		readImg(file, cover);
 		cover.alt = file.name;
 		cover.classList.add("__img-cover", "img-size");
 
-		previewPrevChild.remove();
+		preview.firstElementChild.remove();
 		preview.append(cover);
 	}
 });
@@ -122,7 +190,7 @@ function toResponsive() {
 		initialDisplay = 0;
 		nextDisplay = 1;
 		if (isRemoved) {
-			showMoreBtn.textContent = "Show More";
+			createPreviewText(preview);
 			isRemoved = false;
 		}
 		removeHidden(showMoreBtn);
@@ -245,13 +313,27 @@ function addBook(event) {
 	const newLinkContainer = document.createElement("li");
 	const newLink = document.createElement("a");
 	const newMark = document.createElement("div");
+	const newEditBtn = document.createElement("button");
 	const newReadCheckInput = document.createElement("input");
 	const newMarkLabel = document.createElement("label");
 	const randomId = crypto.randomUUID();
 
 	const isCoverExist = cover.getAttribute("src");
 	const isTitleExist = titleInput.value;
-	const isLinkExist = link.value;
+	const isLinkExist = linkInput.value;
+
+	for (const file of coverInput.files) {
+		if (coverImg) URL.revokeObjectURL(coverImg);
+		coverImg = URL.createObjectURL(file);
+		addBookToLibrary(
+			coverImg,
+			titleInput.value,
+			volInput.value,
+			authorInput.value,
+			linkInput.value,
+			markAsReadInput.checked
+		);
+	}
 
 	if (!isTitleExist) {
 		addBookModal.showModal();
@@ -310,7 +392,7 @@ function addBook(event) {
 		newLink.removeAttribute("href");
 	} else {
 		newLink.textContent = "Visit me.";
-		newLink.href = link.value;
+		newLink.href = linkInput.value;
 	}
 
 	// ##MARK
@@ -320,12 +402,17 @@ function addBook(event) {
 	newReadCheckInput.classList.add("__read-check");
 	newReadCheckInput.id = randomId;
 	newReadCheckInput.type = "checkbox";
-	newReadCheckInput.checked = marked.checked;
+	newReadCheckInput.checked = markAsReadInput.checked;
 
 	// ##MARK LABEL
 	newMarkLabel.classList.add("__text", "__mark");
 	newMarkLabel.setAttribute("for", newReadCheckInput.id);
 	newMarkLabel.textContent = "Mark as read.";
+
+	// ##EDIT BTN
+	newEditBtn.classList.add("btn", "__edit");
+	newEditBtn.type = "button";
+	newEditBtn.textContent = "Edit";
 
 	// !!ADD TO LINK CONTAINER
 	newLinkContainer.appendChild(newLink);
@@ -337,14 +424,14 @@ function addBook(event) {
 	newDetail.append(newTitle, newVol, newAuthor, newLinkContainer);
 
 	// !!ADD TO BOOK
-	newBook.append(checkbox, newCover, newTitle, newDetail, newMark);
+	newBook.append(checkbox, newCover, newTitle, newDetail, newMark, newEditBtn);
 
 	if (bookItems.length <= 6) {
 		bookContainer.appendChild(newBook);
 	}
 
 	preview.firstElementChild.remove();
-	preview.textContent = "Preview";
+	createPreviewText(preview);
 	form.reset();
 }
 
@@ -377,7 +464,7 @@ function displayImage(files) {
 			cover.src = urlImg;
 			cover.classList.add("__cover", "img-size");
 			cover.alt = file.name;
-			previewPrevChild.remove();
+			preview.firstElementChild.remove();
 			preview.appendChild(cover);
 		}
 	}
@@ -392,7 +479,7 @@ function dropHandler(ev) {
 	;
 	displayImage(file);
 
-	imgInput.files = ev.dataTransfer.files;
+	coverInput.files = ev.dataTransfer.files;
 }
 
 function toClose() {
@@ -423,4 +510,48 @@ function toValid() {
 
 function toRemoveMessage(e) {
 	e.currentTarget.style.display = "none";
+}
+
+function Book(cover, title, vol, author, link, markAsRead) {
+	if (!new.target) {
+		throw Error("You must use the 'new' operator to call the constructor");
+	}
+
+	this.cover = cover;
+	this.title = title;
+	this.vol = vol;
+	this.author = author;
+	this.link = link;
+	this.markAsRead = markAsRead;
+	this.id = crypto.randomUUID();
+}
+
+function addBookToLibrary(cover, title, vol, author, link, markAsRead) {
+	const book = new Book(cover, title, vol, author, link, markAsRead);
+	const newCover = book.cover;
+	const newTitle = book.title;
+	const newVol = book.vol;
+	const newAuthor = book.author;
+	const newLink = book.link;
+	const newMarkAsRead = book.markAsRead;
+	const newId = book.id;
+
+	const newBook = {
+		cover: newCover,
+		title: newTitle,
+		vol: newVol,
+		author: newAuthor,
+		link: newLink,
+		markAsRead: newMarkAsRead,
+		id: newId,
+	};
+
+	myLibrary.push(newBook);
+}
+
+function createPreviewText(parent) {
+	const previewText = document.createElement("p");
+	previewText.classList.add("__preview-text");
+	previewText.textContent = "Preview";
+	parent.appendChild(previewText);
 }

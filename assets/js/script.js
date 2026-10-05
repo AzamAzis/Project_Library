@@ -92,9 +92,9 @@ for (const book of myLibrary) {
 	const newLinkContainer = document.createElement("li");
 	const newLink = document.createElement("a");
 	const newMark = document.createElement("div");
-	const newReadCheck = document.createElement("input");
-	const newLabelReadCheck = document.createElement("label");
-	const newEdit = document.createElemenr("button");
+	const newReadCheckInput = document.createElement("input");
+	const newMarkLabel = document.createElement("label");
+	const newEditBtn = document.createElement("button");
 
 	// ##BOOK
 	newBookCard.classList.add("book");
@@ -116,6 +116,66 @@ for (const book of myLibrary) {
 	// ##TITLE
 	newTitle.classList.add("__title", "overflow-hidden");
 	newTitle.textContent = book.title;
+
+	// ##DETAIL
+	newDetail.classList.add("__detail");
+
+	// ##VOL
+	newVol.classList.add("__vol", "overflow-hidden");
+	newVol.textContent = `Vol: ${book.vol}`;
+
+	// ##AUTHOR
+	newAuthor.classList.add("__author", "overflow-hidden");
+	newAuthor.textContent = `Author: ${book.author}`;
+
+	// ##LINK CONTAINER
+	newLinkContainer.classList.add("link-container");
+
+	// ##LINK
+	newLink.classList.add("__link");
+	if (book.link) {
+		newLink.href = book.link;
+		newLink.rel = "noopener noreferrer";
+		newLink.target = "_blank";
+		newLink.textContent = "Visit me.";
+	} else {
+		newLink.textContent = "none";
+	}
+
+	// ##MARK
+	newMark.classList.add("__mark");
+
+	// ##MARK INPUT
+	newReadCheckInput.classList.add("__read-check");
+	newReadCheckInput.id = book.id;
+	newReadCheckInput.type = "checkbox";
+	newReadCheckInput.checked = book.markAsRead;
+
+	// ##MARK LABEL
+	newMarkLabel.classList.add("__text");
+	newMarkLabel.setAttribute("for", newReadCheckInput.id);
+	newMarkLabel.textContent = "Mark As Read.";
+
+	// ##EDIT BTN
+	newEditBtn.classList.add("btn", "__edit");
+	newEditBtn.type = "button";
+	newEditBtn.textContent = "Edit";
+
+	// !!ADD TO MARK
+	newMark.append(newReadCheckInput, newMarkLabel);
+
+	// !!ADD TO LINK CONTAINER
+	newLinkContainer.append(newLink);
+
+	// !!ADD TO DETAIL
+	newDetail.append(newVol, newAuthor, newLinkContainer);
+
+	// !!ADD TO BOOK
+	newBookCard.append(newCover, newTitle, newDetail, newMark, newEditBtn);
+
+	if (myLibrary.length <= 6) {
+		bookContainer.appendChild(newBookCard);
+	}
 }
 
 // ||CLOSE DIALOG
@@ -303,7 +363,7 @@ function readImg(file, item) {
 
 function addBook(event) {
 	event.preventDefault();
-	const newBook = document.createElement("li");
+	const newBookCard = document.createElement("li");
 	const checkbox = document.createElement("input");
 	const newCover = document.createElement("img");
 	const newTitle = document.createElement("h2");
@@ -347,7 +407,7 @@ function addBook(event) {
 	};
 
 	//##BOOK
-	newBook.classList.add("book");
+	newBookCard.classList.add("book");
 
 	// ##CHECKBOX
 	checkbox.classList.add("__checkbox");
@@ -384,15 +444,14 @@ function addBook(event) {
 
 	// ##LINK
 	newLink.classList.add("__link");
-	newLink.rel = "noopener noreferrer";
-	newLink.target = "_blank";
 
 	if (!isLinkExist) {
 		newLink.textContent = "none";
-		newLink.removeAttribute("href");
 	} else {
 		newLink.textContent = "Visit me.";
 		newLink.href = linkInput.value;
+		newLink.rel = "noopener noreferrer";
+		newLink.target = "_blank";
 	}
 
 	// ##MARK
@@ -424,10 +483,10 @@ function addBook(event) {
 	newDetail.append(newTitle, newVol, newAuthor, newLinkContainer);
 
 	// !!ADD TO BOOK
-	newBook.append(checkbox, newCover, newTitle, newDetail, newMark, newEditBtn);
+	newBookCard.append(checkbox, newCover, newTitle, newDetail, newMark, newEditBtn);
 
 	if (bookItems.length <= 6) {
-		bookContainer.appendChild(newBook);
+		bookContainer.appendChild(newBookCard);
 	}
 
 	preview.firstElementChild.remove();

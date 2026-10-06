@@ -1,5 +1,4 @@
 const bookContainer = document.querySelector(".book-container");
-const books = bookContainer.querySelectorAll(".book");
 const showMoreBtn = document.querySelector(".show-more");
 const addBookModal = document.querySelector(".add-book-modal");
 const closeBtn = addBookModal.querySelector(".__close");
@@ -19,9 +18,6 @@ const previewPrevChild = preview.firstElementChild;
 const cover = document.createElement("img");
 
 const saveBtn = document.querySelector(".__save");
-
-const bookItems = Array.from(books);
-const savedBookId = [];
 
 const bookOne = {
 	cover: "assets/img/book-cover/Hanako-cover.jpg",
@@ -61,24 +57,6 @@ let coverImg;
 let initialDisplay = 0;
 let nextDisplay = 1;
 let isRemoved = true;
-
-const next = getNextBook(initialDisplay, nextDisplay);
-const bookContainerGap = Number.parseFloat(getComputedStyle(bookContainer).gap);
-const initialBookHeight = getBookHeight(next);
-let initialBookContainerHeight = getBookContainerHeight(initialBookHeight, bookContainerGap);
-
-bookItems.forEach((item) => {
-	const id = crypto.randomUUID(); //**GENERATE BOOK ID */
-	item.id = id;
-
-	savedBookId.push(item.id); //**STORING BOOK ID */
-});
-
-// ||RESPONSIVENESS
-toResponsive();
-screen.addEventListener("change", toResponsive);
-
-showMoreBtn.addEventListener("click", showMore);
 
 // ||DISPLAY CURRENT BOOKS
 for (const book of myLibrary) {
@@ -178,6 +156,20 @@ for (const book of myLibrary) {
 	}
 }
 
+const books = bookContainer.querySelectorAll(".book");
+const bookItems = Array.from(books);
+
+const next = getNextBook(initialDisplay, nextDisplay);
+const bookContainerGap = Number.parseFloat(getComputedStyle(bookContainer).gap);
+const initialBookHeight = getBookHeight(next);
+let initialBookContainerHeight = getBookContainerHeight(initialBookHeight, bookContainerGap);
+
+// ||RESPONSIVENESS
+toResponsive();
+screen.addEventListener("change", toResponsive);
+
+showMoreBtn.addEventListener("click", showMore);
+
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
 
@@ -249,9 +241,9 @@ function toResponsive() {
 		;
 		initialDisplay = 0;
 		nextDisplay = 1;
-		if (isRemoved) {
+		if (!isRemoved) {
 			createPreviewText(preview);
-			isRemoved = false;
+			isRemoved = true;
 		}
 		removeHidden(showMoreBtn);
 		setHeight(bookContainer, initialBookContainerHeight);
@@ -269,7 +261,7 @@ function showMore() {
 	initialDisplay++;
 	nextDisplay++;
 	const nextBook = getNextBook(initialDisplay, nextDisplay);
-	if (nextDisplay <= savedBookId.length) {
+	if (nextDisplay <= myLibrary.length) {
 	removeHidden(nextBook[0]);
 
 	const height = getBookHeight(nextBook) + bookContainerGap;
@@ -282,10 +274,10 @@ function showMore() {
 		isRemoved = true;
 	}
 
-	if (nextDisplay === savedBookId.length) {
+	if (nextDisplay === myLibrary.length) {
 		showMoreBtn.textContent = "Show Less";
 		return;
-	} else if (nextDisplay > savedBookId.length) {
+	} else if (nextDisplay > myLibrary.length) {
 		showMoreBtn.textContent = "Show More";
 		initialDisplay = 0;
 		nextDisplay = 1;
@@ -485,7 +477,7 @@ function addBook(event) {
 	// !!ADD TO BOOK
 	newBookCard.append(checkbox, newCover, newTitle, newDetail, newMark, newEditBtn);
 
-	if (bookItems.length <= 6) {
+	if (myLibrary.length <= 6) {
 		bookContainer.appendChild(newBookCard);
 	}
 

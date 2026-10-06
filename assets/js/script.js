@@ -19,6 +19,8 @@ const cover = document.createElement("img");
 
 const saveBtn = document.querySelector(".__save");
 
+const fileReader = new FileReader();
+
 const bookOne = {
 	cover: "assets/img/book-cover/Hanako-cover.jpg",
 	title: "Toilet-bound Hanako-Kun",
@@ -51,7 +53,6 @@ const bookThree = {
 
 const myLibrary = [bookOne, bookTwo, bookThree];
 
-let urlImg;
 let coverImg;
 
 let initialDisplay = 0;
@@ -177,12 +178,9 @@ closeBtn.addEventListener("click", toClose);
 // ||ADD PREVIEW
 coverInput.addEventListener("change", (event) => {
 	for (const file of event.currentTarget.files) {
-		readImg(file, cover);
-		cover.alt = file.name;
-		cover.classList.add("__img-cover", "img-size");
+		readFileImg(cover, file);
 
-		preview.firstElementChild.remove();
-		preview.append(cover);
+		preview.firstElementChild.replaceWith(cover);
 	}
 });
 
@@ -342,17 +340,6 @@ function getBookContainerHeight(value, gap) {
 	return height;
 }
 
-
-function readImg(file, item) {
-	if (urlImg) {
-		URL.revokeObjectURL(urlImg);
-	}
-
-	urlImg = URL.createObjectURL(file);
-
-	item.src = urlImg;
-}
-
 function addBook(event) {
 	event.preventDefault();
 	const newBookCard = document.createElement("li");
@@ -375,8 +362,7 @@ function addBook(event) {
 	const isLinkExist = linkInput.value;
 
 	for (const file of coverInput.files) {
-		if (coverImg) URL.revokeObjectURL(coverImg);
-		coverImg = URL.createObjectURL(file);
+		coverImg = file;
 		addBookToLibrary(
 			coverImg,
 			titleInput.value,
@@ -386,6 +372,8 @@ function addBook(event) {
 			markAsReadInput.checked
 		);
 	}
+
+	console.log(myLibrary);
 
 	if (!isTitleExist) {
 		addBookModal.showModal();
@@ -508,15 +496,9 @@ function createNewDetail(item, value, classDetail, ...utilities) {
 function displayImage(files) {
 	for (const file of files) {
 		if (file.type.startsWith("image/")) {
-			if (urlImg) {
-				URL.revokeObjectURL(urlImg);
-			}
-			urlImg = URL.createObjectURL(file);
-			cover.src = urlImg;
-			cover.classList.add("__cover", "img-size");
-			cover.alt = file.name;
-			preview.firstElementChild.remove();
-			preview.appendChild(cover);
+			readFileImg(cover, file);
+
+			preview.firstElementChild.replaceWith(cover);
 		}
 	}
 }
@@ -605,4 +587,16 @@ function createPreviewText(parent) {
 	previewText.classList.add("__preview-text");
 	previewText.textContent = "Preview";
 	parent.appendChild(previewText);
+}
+
+function readFileImg(item, file) {
+	fileReader.addEventListener("load", () => {
+		item.src = fileReader.result;
+		item.alt = item.name;
+		item.classList.add("__img-cover", "img-size");
+	});
+
+	if (file) {
+		fileReader.readAsDataURL(file);
+	};
 }

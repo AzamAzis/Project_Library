@@ -136,6 +136,7 @@
 	border-radius: var(--br-r);
 	padding: var(--space-xs);
 	color: var(--text-gray);
+	user-select: none;
 	-webkit-tap-highlight-color: transparent;
 }
 
@@ -226,7 +227,7 @@
 	}
 
 	& .__img-cover {
-		display: block;
+		/* display: block; */
 		height: 100%;
 		margin-inline: auto;
 	}

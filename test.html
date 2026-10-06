@@ -6,132 +6,53 @@
 	<title>Document</title>
 	<style>
 		body {
-			padding: 20px;
-  font-family: "Arial", sans-serif;
+			background: black;
+			width: 500px;
+			margin: auto;
+  padding: 10px;
 }
 
-#drop-zone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 500px;
-  max-width: 100%;
-  height: 200px;
-  padding: 1em;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  color: slategray;
-  cursor: pointer;
-}
-
-#file-input {
-  display: none;
-}
-
-#preview {
-  width: 500px;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  list-style: none;
-  padding: 0;
-}
-
-#preview li {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  margin: 0;
+img {
+  display: block;
   width: 100%;
-  height: 100px;
+  object-fit: contain;
+  height: 150px;
+  background: gray;
 }
-
-#preview img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-}
-
 	</style>
 </head>
 <body>
-	<label id="drop-zone">
-  Drop images here, or click to upload.
-  <input type="file" id="file-input" multiple accept="image/*" />
-</label>
-<ul id="preview"></ul>
-<button id="clear-btn">Clear</button>
+	<input type="file" /><br />
+	<div>Preview</div>
+<script>
+  const reader = new FileReader();
+	const preview = document.createElement("img");
+const fileInput = document.querySelector("input[type=file]");
+const div = document.querySelector("div");
 
-	<script>
-const dropZone = document.getElementById("drop-zone");
+fileInput.addEventListener("change", previewFile);
 
-dropZone.addEventListener("drop", dropHandler);
-window.addEventListener("drop", (e) => {
-  if ([...e.dataTransfer.items].some((item) => item.kind === "file")) {
-    e.preventDefault();
-  }
-});
-dropZone.addEventListener("dragover", (e) => {
-  const fileItems = [...e.dataTransfer.items].filter(
-    (item) => item.kind === "file",
-  );
-  if (fileItems.length > 0) {
-    e.preventDefault();
-    if (fileItems.some((item) => item.type.startsWith("image/"))) {
-      e.dataTransfer.dropEffect = "copy";
-    } else {
-      e.dataTransfer.dropEffect = "none";
-    }
-  }
-});
+function previewFile() {
+  const img = document.createElement("img");
+  const hello = document.createElement("img");
+  const file = fileInput.files[0];
 
-window.addEventListener("dragover", (e) => {
-  const fileItems = [...e.dataTransfer.items].filter(
-    (item) => item.kind === "file",
-  );
-  if (fileItems.length > 0) {
-    e.preventDefault();
-    if (!dropZone.contains(e.target)) {
-      e.dataTransfer.dropEffect = "none";
-    }
-  }
-});
-const preview = document.getElementById("preview");
 
-function displayImages(files) {
-  for (const file of files) {
-    if (file.type.startsWith("image/")) {
-      const li = document.createElement("li");
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      img.alt = file.name;
-      li.appendChild(img);
-      li.appendChild(document.createTextNode(file.name));
-      preview.appendChild(li);
-    }
+  reader.addEventListener("load", () => {
+    // convert image file to base64 string
+    preview.src = reader.result;
+  });
+
+	
+
+  if (file) {
+    reader.readAsDataURL(file);
   }
+
+  div.firstChild.replaceWith(preview);
+  console.log(hello);
 }
 
-function dropHandler(ev) {
-  ev.preventDefault();
-  const files = [...ev.dataTransfer.items]
-    .map((item) => item.getAsFile())
-    .filter((file) => file);
-  displayImages(files);
-}
-const fileInput = document.getElementById("file-input");
-fileInput.addEventListener("change", (e) => {
-  displayImages(e.target.files);
-});
-const clearBtn = document.getElementById("clear-btn");
-clearBtn.addEventListener("click", () => {
-  for (const img of preview.querySelectorAll("img")) {
-    URL.revokeObjectURL(img.src);
-  }
-  preview.textContent = "";
-});
-
-	</script>
+</script>
 </body>
 </html>

@@ -2,6 +2,7 @@ const addBookBtn = document.querySelector(".add");
 const updateBtn = document.querySelector(".update");
 const cancelBtn = document.querySelector(".cancel");
 const checkAllBtn = document.querySelector(".check-all");
+const uncheckAllBtn = document.querySelector(".uncheck-all");
 const bookContainer = document.querySelector(".book-container");
 const showMoreBtn = document.querySelector(".show-more");
 const addBookModal = document.querySelector(".add-book-modal");
@@ -164,9 +165,6 @@ for (const book of myLibrary) {
 const books = bookContainer.querySelectorAll(".book");
 const bookItems = Array.from(books);
 
-const checkboxes = document.querySelectorAll(".__checkbox");
-const checkboxItems = [...checkboxes];
-
 const next = getNextBook(initialDisplay, nextDisplay);
 const bookContainerGap = Number.parseFloat(getComputedStyle(bookContainer).gap);
 const initialBookHeight = getBookHeight(next);
@@ -183,9 +181,6 @@ updateBtn.addEventListener("click", update);
 
 // ||CHECK
 checkAllBtn.addEventListener("click", checkBtn);
-checkboxes.forEach((checkbox) => {
-	checkbox.addEventListener("change", toCheck);
-});
 
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
@@ -408,7 +403,6 @@ function addBook(event) {
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
-	newCheckbox.addEventListener("change", toCheck);
 
 	// ##COVER
 	newCover.classList.add("__cover", "img-size");
@@ -630,36 +624,17 @@ function update() {
 
 	updateBtn.textContent = "Remove";
 	checkAllBtn.classList.remove("hidden");
+	uncheckAllBtn.classList.remove("hidden");
 	cancelBtn.classList.remove("hidden");
 
 	addBookBtn.disabled = true;
 }
 
-let isChecked = false;
-
 function checkBtn() {
 	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
 	const currentCheckBoxItems = [...currentCheckboxes];
 
-	isChecked = !isChecked;
-
 	currentCheckBoxItems.forEach((item) => {
-		item.checked = isChecked;
+		item.checked = true;
 	});
-
-	if (isChecked) {
-		checkAllBtn.textContent = "Uncheck all";
-	} else {
-		checkAllBtn.textContent = "Check all";
-	}
-}
-
-function toCheck() {
-	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
-	const currentCheckboxItems = [...currentCheckboxes];
-	const isAllChecked = currentCheckboxItems.every((item) => item.checked);
-	if (isAllChecked) {
-		checkAllBtn.textContent = "Uncheck all";
-		isChecked = true;
-	}
 }

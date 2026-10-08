@@ -60,8 +60,6 @@ const bookThree = {
 
 const myLibrary = [bookOne, bookTwo, bookThree];
 
-let coverImg;
-
 let initialDisplay = 0;
 let nextDisplay = 1;
 let isRemoved = true;
@@ -85,13 +83,13 @@ for (const book of myLibrary) {
 	// ##BOOK
 	newBookCard.classList.add("book");
 	newBookCard.id = book.id;
-	newBookCard.dataset.book = newBookCard.id;
 
 	// ##CHECKBOX
 	newCheckbox.classList.add("__checkbox", "hidden");
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
+	newCheckbox.dataset.id = newBookCard.id;
 
 	// ##COVER
 	newCover.classList.add("__cover", "img-size");
@@ -212,6 +210,9 @@ titleInput.addEventListener("input", toValid);
 
 // ||ADD BOOK
 saveBtn.addEventListener("click", addBook);
+
+// ||REMOVE BOOK
+removeBtn.addEventListener("click", removeBook);
 
 // ||DROP COVER
 preview.addEventListener("drop", dropHandler);
@@ -385,18 +386,6 @@ function addBook(event) {
 	const isTitleExist = titleInput.value;
 	const isLinkExist = linkInput.value;
 
-	for (const file of coverInput.files) {
-		coverImg = file;
-		addBookToLibrary(
-			coverImg,
-			titleInput.value,
-			volInput.value,
-			authorInput.value,
-			linkInput.value,
-			markAsReadInput.checked
-		);
-	}
-
 	if (!isTitleExist) {
 		addBookModal.showModal();
 		invalidMessage.style.display = "block";
@@ -410,12 +399,14 @@ function addBook(event) {
 
 	//##BOOK
 	newBookCard.classList.add("book");
+	newBookCard.id = randomId;
 
 	// ##CHECKBOX
 	newCheckbox.classList.add("__checkbox", "hidden");
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
+	newCheckbox.dataset = newBookCard.id;
 	newCheckbox.addEventListener("change", toCheck);
 
 	// ##COVER
@@ -462,7 +453,6 @@ function addBook(event) {
 
 	// ##MARK INPUT
 	newReadCheckInput.classList.add("__read-check");
-	newReadCheckInput.id = randomId;
 	newReadCheckInput.type = "checkbox";
 	newReadCheckInput.checked = markAsReadInput.checked;
 
@@ -475,6 +465,16 @@ function addBook(event) {
 	newEditBtn.classList.add("btn", "__edit", "hidden");
 	newEditBtn.type = "button";
 	newEditBtn.textContent = "Edit";
+
+	addBookToLibrary(
+		newCover,
+		titleInput.value,
+		volInput.value,
+		authorInput.value,
+		linkInput.value,
+		markAsReadInput.checked,
+		newBookCard.id,
+	);
 
 	// !!ADD TO LINK CONTAINER
 	newLinkContainer.appendChild(newLink);
@@ -568,7 +568,7 @@ function toRemoveMessage(e) {
 	e.currentTarget.style.display = "none";
 }
 
-function Book(cover, title, vol, author, link, markAsRead) {
+function Book(cover, title, vol, author, link, markAsRead, id) {
 	if (!new.target) {
 		throw Error("You must use the 'new' operator to call the constructor");
 	}
@@ -579,11 +579,11 @@ function Book(cover, title, vol, author, link, markAsRead) {
 	this.author = author;
 	this.link = link;
 	this.markAsRead = markAsRead;
-	this.id = crypto.randomUUID();
+	this.id = id;
 }
 
-function addBookToLibrary(cover, title, vol, author, link, markAsRead) {
-	const book = new Book(cover, title, vol, author, link, markAsRead);
+function addBookToLibrary(cover, title, vol, author, link, markAsRead, id) {
+	const book = new Book(cover, title, vol, author, link, markAsRead, id);
 	const newCover = book.cover;
 	const newTitle = book.title;
 	const newVol = book.vol;
@@ -722,5 +722,17 @@ function finishUpdate() {
 
 	currentEditBtnItems.forEach((item) => {
 		item.classList.add("hidden")
+	});
+}
+
+function removeBook() {
+	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
+	const currentCheckboxItems = [...currentCheckboxes];
+
+	currentCheckboxItems.forEach((item) => {
+		const isCheckTrue = item.checked;
+		if (!isCheckTrue) return;
+		console.log(item.dataset.id);
+		console.log(myLibrary[0].id);
 	});
 }

@@ -24,34 +24,18 @@ img {
 <body>
 	<input type="file" /><br />
 	<div>Preview</div>
+
+
+
 <script>
-  const reader = new FileReader();
-	const preview = document.createElement("img");
-const fileInput = document.querySelector("input[type=file]");
-const div = document.querySelector("div");
 
-fileInput.addEventListener("change", previewFile);
+const input = document.querySelector("input");
 
-function previewFile() {
-  const img = document.createElement("img");
-  const hello = document.createElement("img");
-  const file = fileInput.files[0];
+input.addEventListener("input", () => {
+	console.log(input.files.item(0));
+})
 
-
-  reader.addEventListener("load", () => {
-    // convert image file to base64 string
-    preview.src = reader.result;
-  });
-
-	
-
-  if (file) {
-    reader.readAsDataURL(file);
-  }
-
-  div.firstChild.replaceWith(preview);
-  console.log(hello);
-}
+console.log(input.files.item(0));
 
 </script>
 </body>

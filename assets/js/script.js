@@ -1,5 +1,7 @@
 const addBookBtn = document.querySelector(".add");
 const updateBtn = document.querySelector(".update");
+const removeBtn = document.querySelector(".remove");
+const confirmBtn = document.querySelector(".confirm");
 const cancelBtn = document.querySelector(".cancel");
 const checkAllBtn = document.querySelector(".check-all");
 const uncheckAllBtn = document.querySelector(".uncheck-all");
@@ -86,7 +88,7 @@ for (const book of myLibrary) {
 	newBookCard.dataset.book = newBookCard.id;
 
 	// ##CHECKBOX
-	newCheckbox.classList.add("__checkbox");
+	newCheckbox.classList.add("__checkbox", "hidden");
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
@@ -141,7 +143,7 @@ for (const book of myLibrary) {
 	newMarkLabel.textContent = "Mark As Read.";
 
 	// ##EDIT BTN
-	newEditBtn.classList.add("btn", "__edit");
+	newEditBtn.classList.add("btn", "__edit", "hidden");
 	newEditBtn.type = "button";
 	newEditBtn.textContent = "Edit";
 
@@ -165,6 +167,9 @@ for (const book of myLibrary) {
 const books = bookContainer.querySelectorAll(".book");
 const bookItems = Array.from(books);
 
+const checkboxes = bookContainer.querySelectorAll(".__checkbox");
+const checkboxItems = [...checkboxes];
+
 const next = getNextBook(initialDisplay, nextDisplay);
 const bookContainerGap = Number.parseFloat(getComputedStyle(bookContainer).gap);
 const initialBookHeight = getBookHeight(next);
@@ -178,9 +183,17 @@ showMoreBtn.addEventListener("click", showMore);
 
 // ||UPDATE
 updateBtn.addEventListener("click", update);
+cancelBtn.addEventListener("click", cancelUpdate);
 
 // ||CHECK
-checkAllBtn.addEventListener("click", checkBtn);
+checkAllBtn.addEventListener("click", checkAll);
+uncheckAllBtn.addEventListener("click", uncheckAll);
+
+checkboxItems.forEach((item) => {
+	item.addEventListener("change", toCheck);
+});
+
+
 
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
@@ -399,10 +412,11 @@ function addBook(event) {
 	newBookCard.classList.add("book");
 
 	// ##CHECKBOX
-	newCheckbox.classList.add("__checkbox");
+	newCheckbox.classList.add("__checkbox", "hidden");
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
+	newCheckbox.addEventListener("change", toCheck);
 
 	// ##COVER
 	newCover.classList.add("__cover", "img-size");
@@ -458,7 +472,7 @@ function addBook(event) {
 	newMarkLabel.textContent = "Mark as read.";
 
 	// ##EDIT BTN
-	newEditBtn.classList.add("btn", "__edit");
+	newEditBtn.classList.add("btn", "__edit", "hidden");
 	newEditBtn.type = "button";
 	newEditBtn.textContent = "Edit";
 
@@ -616,25 +630,97 @@ function update() {
 	const currentEditBtnItems = [...currentEditBtns];
 	const currentCheckboxItems = [...currentCheckboxes];
 	currentEditBtnItems.forEach((item) => {
-		item.style.display = "block";
+		item.classList.remove("hidden");
 	});
 	currentCheckboxItems.forEach((item) => {
-		item.style.display = "block";
+		item.classList.remove("hidden");
 	});
 
-	updateBtn.textContent = "Remove";
+	addBookBtn.classList.add("hidden");
+	updateBtn.classList.add("hidden");
+	removeBtn.classList.remove("hidden");
 	checkAllBtn.classList.remove("hidden");
 	uncheckAllBtn.classList.remove("hidden");
+	confirmBtn.classList.remove("hidden");
 	cancelBtn.classList.remove("hidden");
-
-	addBookBtn.disabled = true;
 }
 
-function checkBtn() {
+function checkAll() {
 	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
-	const currentCheckBoxItems = [...currentCheckboxes];
+	const currentCheckboxItems = [...currentCheckboxes];
 
-	currentCheckBoxItems.forEach((item) => {
+	currentCheckboxItems.forEach((item) => {
 		item.checked = true;
+	});
+
+	checkAllBtn.disabled = true;
+	uncheckAllBtn.disabled = false;
+}
+
+function uncheckAll() {
+	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
+	const currentCheckboxItems = [...currentCheckboxes];
+
+	currentCheckboxItems.forEach((item) => {
+		if (item.checked) {
+			item.checked = false;
+		}
+	});
+
+	uncheckAllBtn.disabled = true;
+	checkAllBtn.disabled = false;
+}
+
+function toCheck(event) {
+	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
+	const currentCheckboxItems = [...currentCheckboxes];
+	const isAllChecked = currentCheckboxItems.every((item) => item.checked);
+
+	if (event.currentTarget.checked && uncheckAllBtn.disabled) {
+		uncheckAllBtn.disabled = false;
+	} else if (!event.currentTarget.checked && checkAllBtn.disabled) {
+		checkAllBtn.disabled = false;
+	} else if (isAllChecked) {
+		checkAllBtn.disabled = true;
+	} else {
+		checkAllBtn.disabled = false;
+	}
+}
+
+function cancelUpdate() {
+	finishUpdate();
+}
+
+function finishUpdate() {
+	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
+	const currentCheckboxItems = [...currentCheckboxes];
+	const currentEditBtns = bookContainer.querySelectorAll(".__edit");
+	const currentEditBtnItems = [...currentEditBtns];
+
+	addBookBtn.classList.remove("hidden");
+	updateBtn.classList.remove("hidden");
+	removeBtn.classList.add("hidden");
+	checkAllBtn.classList.add("hidden");
+	uncheckAllBtn.classList.add("hidden");
+	confirmBtn.classList.add("hidden");
+	cancelBtn.classList.add("hidden");
+
+	if (checkAllBtn.disabled) {
+		checkAllBtn.disabled = false;
+		uncheckAllBtn.disabled = true;
+	} else {
+		uncheckAllBtn.disabled = true;
+	}
+
+	currentCheckboxItems.forEach((item) => {
+		if (item.checked) {
+			item.checked = false;
+		}
+
+		item.classList.add("hidden");
+	});
+
+	currentEditBtnItems.forEach((item) => {
+		item.classList.add("hidden")
 	});
 }

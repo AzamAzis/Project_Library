@@ -21,7 +21,7 @@ img {
 }
 	</style>
 </head>
-<body>
+<body>P
 	<input type="file" /><br />
 	<div>Preview</div>
 
@@ -29,13 +29,9 @@ img {
 
 <script>
 
-const input = document.querySelector("input");
+const array = [1, 2, 3];
 
-input.addEventListener("input", () => {
-	console.log(input.files.item(0));
-})
-
-console.log(input.files.item(0));
+console.log(Boolean(array.findIndex(() => 0)));
 
 </script>
 </body>

@@ -187,9 +187,9 @@ cancelBtn.addEventListener("click", cancelUpdate);
 checkAllBtn.addEventListener("click", checkAll);
 uncheckAllBtn.addEventListener("click", uncheckAll);
 
-checkboxItems.forEach((item) => {
-	item.addEventListener("change", toCheck);
-});
+// checkboxItems.forEach((item) => {
+// 	item.addEventListener("change", toCheck);
+// });
 
 
 
@@ -252,6 +252,10 @@ window.addEventListener("dragover", (event) => {
 			event.dataTransfer.dropEffect = "none";
 		}
 	}
+});
+
+checkboxItems.forEach((item) => {
+	item.addEventListener("change", toCheck);
 });
 
 // ||FUNCTIONS
@@ -397,6 +401,10 @@ function addBook(event) {
 		addBookModal.close();
 	};
 
+	if (updateBtn.disabled) {
+		updateBtn.disabled = false;
+	}
+
 	//##BOOK
 	newBookCard.classList.add("book");
 	newBookCard.id = randomId;
@@ -406,7 +414,7 @@ function addBook(event) {
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
-	newCheckbox.dataset = newBookCard.id;
+	newCheckbox.dataset.id = newBookCard.id;
 	newCheckbox.addEventListener("change", toCheck);
 
 	// ##COVER
@@ -655,6 +663,8 @@ function checkAll() {
 
 	checkAllBtn.disabled = true;
 	uncheckAllBtn.disabled = false;
+
+	removeBtn.disabled = false;
 }
 
 function uncheckAll() {
@@ -667,6 +677,7 @@ function uncheckAll() {
 		}
 	});
 
+	removeBtn.disabled = true;
 	uncheckAllBtn.disabled = true;
 	checkAllBtn.disabled = false;
 }
@@ -675,19 +686,42 @@ function toCheck(event) {
 	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
 	const currentCheckboxItems = [...currentCheckboxes];
 	const isAllChecked = currentCheckboxItems.every((item) => item.checked);
+	const isSomeChecked = currentCheckboxItems.some((item) => item.checked);
 
 	if (event.currentTarget.checked && uncheckAllBtn.disabled) {
 		uncheckAllBtn.disabled = false;
-	} else if (!event.currentTarget.checked && checkAllBtn.disabled) {
+	} else if (!isSomeChecked && !uncheckAllBtn.disabled) {
+		uncheckAllBtn.disabled = true;
+	}
+
+	if (!event.currentTarget.checked && checkAllBtn.disabled) {
 		checkAllBtn.disabled = false;
 	} else if (isAllChecked) {
 		checkAllBtn.disabled = true;
-	} else {
-		checkAllBtn.disabled = false;
+	}
+
+	if (event.currentTarget.checked && removeBtn.disabled) {
+		removeBtn.disabled = false;
+	} else if (!isSomeChecked && !removeBtn.disabled) {
+		removeBtn.disabled = true;
 	}
 }
 
 function cancelUpdate() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+
+	currentBookItems.forEach((item) => {
+		const isTemporalRemoved = item.classList.contains("hidden");
+		if (isTemporalRemoved) {
+			item.classList.remove("hidden");
+		}
+	});
+
+	if (!removeBtn.disabled) {
+		removeBtn.disabled = true;
+	}
+
 	finishUpdate();
 }
 
@@ -726,13 +760,32 @@ function finishUpdate() {
 }
 
 function removeBook() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
 	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
 	const currentCheckboxItems = [...currentCheckboxes];
+	const isAllTemporalRemoved =
+		currentBookItems.every((book) => book.classList.contains("hidden"));
 
 	currentCheckboxItems.forEach((item) => {
 		const isCheckTrue = item.checked;
+		const bookLocation =
+			myLibrary.findIndex((book) => book.id === item.dataset.id);
+		const currentBookCard = currentBookItems[bookLocation];
+
 		if (!isCheckTrue) return;
-		console.log(item.dataset.id);
-		console.log(myLibrary[0].id);
+		currentBookCard.classList.add("hidden");
+
+		if (currentBookCard.classList.contains("hidden") && item.checked) {
+			item.checked = false;
+			removeBtn.disabled = true;
+		}
+
+		if (isAllTemporalRemoved) {
+			checkAllBtn.disabled = true;
+			removeBtn.disabled = true;
+		}
 	});
+
+	uncheckAllBtn.disabled = true;
 }

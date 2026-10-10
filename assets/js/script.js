@@ -182,16 +182,11 @@ showMoreBtn.addEventListener("click", showMore);
 // ||UPDATE
 updateBtn.addEventListener("click", update);
 cancelBtn.addEventListener("click", cancelUpdate);
+confirmBtn.addEventListener("click", confirmUpdate);
 
 // ||CHECK
 checkAllBtn.addEventListener("click", checkAll);
 uncheckAllBtn.addEventListener("click", uncheckAll);
-
-// checkboxItems.forEach((item) => {
-// 	item.addEventListener("change", toCheck);
-// });
-
-
 
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
@@ -500,6 +495,10 @@ function addBook(event) {
 		bookContainer.appendChild(newBookCard);
 	}
 
+	if (updateBtn.disabled) {
+		updateBtn.disabled = false;
+	}
+
 	preview.firstElementChild.remove();
 	createPreviewText(preview);
 	form.reset();
@@ -654,11 +653,18 @@ function update() {
 }
 
 function checkAll() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
 	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
 	const currentCheckboxItems = [...currentCheckboxes];
 
-	currentCheckboxItems.forEach((item) => {
+	currentCheckboxItems.forEach((item, index) => {
+		const isTemporalRemoved = currentBookItems[index].classList.contains("hidden");
 		item.checked = true;
+
+		if (isTemporalRemoved) {
+			item.checked = false;
+		}
 	});
 
 	checkAllBtn.disabled = true;
@@ -788,4 +794,30 @@ function removeBook() {
 	});
 
 	uncheckAllBtn.disabled = true;
+}
+
+function confirmUpdate() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+
+	currentBookItems.forEach((item) => {
+		const isTemporalRemoved = item.classList.contains("hidden");
+
+		if (!isTemporalRemoved) return;
+
+		const bookCurrentLocation = myLibrary.findIndex((book) => book.id === item.id);
+		myLibrary.splice(bookCurrentLocation, 1);
+
+		item.remove();
+	});
+
+	console.log(myLibrary);
+
+	const isEmptyLibrary = myLibrary.length === 0;
+
+	if (isEmptyLibrary) {
+		updateBtn.disabled = true;
+	}
+
+	finishUpdate();
 }

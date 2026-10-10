@@ -6,7 +6,6 @@
 	<title>Document</title>
 	<style>
 		body {
-			background: black;
 			width: 500px;
 			margin: auto;
   padding: 10px;
@@ -30,8 +29,13 @@ img {
 <script>
 
 const array = [1, 2, 3];
-
-console.log(Boolean(array.findIndex(() => 0)));
+console.log(array);
+let g = 0;
+array.forEach((item, index, array) => {
+	array.splice(index, 1);
+	if (index > 0) index--;
+	console.log(array, index)
+});
 
 </script>
 </body>

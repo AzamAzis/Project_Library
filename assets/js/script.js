@@ -811,8 +811,6 @@ function confirmUpdate() {
 		item.remove();
 	});
 
-	console.log(myLibrary);
-
 	const isEmptyLibrary = myLibrary.length === 0;
 
 	if (isEmptyLibrary) {

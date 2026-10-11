@@ -162,9 +162,6 @@ for (const book of myLibrary) {
 	}
 }
 
-const books = bookContainer.querySelectorAll(".book");
-const bookItems = Array.from(books);
-
 const checkboxes = bookContainer.querySelectorAll(".__checkbox");
 const checkboxItems = [...checkboxes];
 
@@ -267,12 +264,12 @@ function toResponsive() {
 			createPreviewText(preview);
 			isRemoved = true;
 		}
-		removeHidden(showMoreBtn);
+		showMoreBtn.classList.remove("hidden");
 		setHeight(bookContainer, initialBookContainerHeight);
 		overflowHide(bookContainer);
 		hideBook();
 	} else {
-		addHidden(showMoreBtn);
+		showMoreBtn.classList.add("hidden");
 		unsetHeight(bookContainer);
 		overflowUnHide(bookContainer);
 		unHideBook();
@@ -313,24 +310,24 @@ function showMore() {
 }
 
 function hideBook() {
-	bookItems.forEach((item, index, array) => {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+	currentBookItems.forEach((item, index, array) => {
 		if (array[index] === array[0]) return;
-		addHidden(item);
-	});
-}
-
-function unHideBook() {
-	bookItems.forEach((item) => {
 		removeHidden(item);
 	});
 }
 
-function addHidden(item) {
-	item.classList.add("hidden");
+function unHideBook() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+	currentBookItems.forEach((item) => {
+		removeHidden(item);
+	});
 }
 
 function removeHidden(item) {
-	item.classList.remove("hidden");
+	item.style.display = "";
 }
 
 function setHeight(item, height) {
@@ -350,7 +347,9 @@ function overflowUnHide(item) {
 }
 
 function getNextBook(initialDisplay, nextDisplay) {
-	const storage = bookItems.slice(initialDisplay, nextDisplay);
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+	const storage = currentBookItems.slice(initialDisplay, nextDisplay);
 	return storage;
 }
 
@@ -491,8 +490,12 @@ function addBook(event) {
 	// !!ADD TO BOOK
 	newBookCard.append(newCheckbox, newCover, newTitle, newDetail, newMark, newEditBtn);
 
-	if (myLibrary.length <= 6) {
+	if (myLibrary.length < 6) {
 		bookContainer.appendChild(newBookCard);
+	}
+
+	if (showMoreBtn.classList.contains("hidden") && myLibrary.length > 1) {
+		showMoreBtn.classList.remove("hidden");
 	}
 
 	if (updateBtn.disabled) {
@@ -716,6 +719,8 @@ function toCheck(event) {
 function cancelUpdate() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
+	const isAllTemporalRemoved =
+		currentBookItems.every((book) => book.classList.contains("hidden"));
 
 	currentBookItems.forEach((item) => {
 		const isTemporalRemoved = item.classList.contains("hidden");
@@ -726,6 +731,10 @@ function cancelUpdate() {
 
 	if (!removeBtn.disabled) {
 		removeBtn.disabled = true;
+	}
+
+	if (isAllTemporalRemoved) {
+		showMoreBtn.classList.remove("hidden");
 	}
 
 	finishUpdate();
@@ -770,8 +779,6 @@ function removeBook() {
 	const currentBookItems = [...currentBooks];
 	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
 	const currentCheckboxItems = [...currentCheckboxes];
-	const isAllTemporalRemoved =
-		currentBookItems.every((book) => book.classList.contains("hidden"));
 
 	currentCheckboxItems.forEach((item) => {
 		const isCheckTrue = item.checked;
@@ -782,13 +789,15 @@ function removeBook() {
 		if (!isCheckTrue) return;
 		currentBookCard.classList.add("hidden");
 
-		if (currentBookCard.classList.contains("hidden") && item.checked) {
-			item.checked = false;
-			removeBtn.disabled = true;
-		}
+		const isAllTemporalRemoved =
+			currentBookItems.every((book) => book.classList.contains("hidden"));
 
 		if (isAllTemporalRemoved) {
-			checkAllBtn.disabled = true;
+			showMoreBtn.classList.add("hidden");
+		}
+
+		if (currentBookCard.classList.contains("hidden") && item.checked) {
+			item.checked = false;
 			removeBtn.disabled = true;
 		}
 	});
@@ -815,6 +824,7 @@ function confirmUpdate() {
 
 	if (isEmptyLibrary) {
 		updateBtn.disabled = true;
+		showMoreBtn.classList.add("hidden");
 	}
 
 	finishUpdate();

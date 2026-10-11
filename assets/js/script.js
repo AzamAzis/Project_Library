@@ -64,7 +64,7 @@ let initialDisplay = 0;
 let nextDisplay = 1;
 let isRemoved = true;
 
-// ||DISPLAY CURRENT BOOKS
+// ||DISPLAY BOOKS
 for (const book of myLibrary) {
 	const newBookCard = document.createElement("li");
 	const newCheckbox = document.createElement("input");
@@ -143,7 +143,11 @@ for (const book of myLibrary) {
 	// ##EDIT BTN
 	newEditBtn.classList.add("btn", "__edit", "hidden");
 	newEditBtn.type = "button";
+	newEditBtn.commandForElement = addBookModal;
+	newEditBtn.command = "show-modal";
+	newEditBtn.dataset.id = newBookCard.id;
 	newEditBtn.textContent = "Edit";
+	newEditBtn.addEventListener("click", editBook);
 
 	// !!ADD TO MARK
 	newMark.append(newReadCheckInput, newMarkLabel);
@@ -467,9 +471,13 @@ function addBook(event) {
 	newEditBtn.classList.add("btn", "__edit", "hidden");
 	newEditBtn.type = "button";
 	newEditBtn.textContent = "Edit";
+	newEditBtn.commandForElement = addBookModal;
+	newEditBtn.command = "show-modal";
+	newEditBtn.dataset.id = newBookCard.id;
+	newEditBtn.addEventListener("click", editBook);
 
 	addBookToLibrary(
-		newCover,
+		newCover.src,
 		titleInput.value,
 		volInput.value,
 		authorInput.value,
@@ -494,12 +502,20 @@ function addBook(event) {
 		bookContainer.appendChild(newBookCard);
 	}
 
-	if (showMoreBtn.classList.contains("hidden") && myLibrary.length > 1) {
+	if (
+		showMoreBtn.classList.contains("hidden") &&
+		myLibrary.length > 1 &&
+		screen.matches
+	) {
 		showMoreBtn.classList.remove("hidden");
 	}
 
 	if (updateBtn.disabled) {
 		updateBtn.disabled = false;
+	}
+
+	if (document.body.classList.contains("hidden")) {
+		document.body.classList.remove("hidden");
 	}
 
 	preview.firstElementChild.remove();
@@ -564,6 +580,10 @@ function toClose() {
 
 	if (invalidMessage.classList.contains("__message")) {
 		invalidMessage.classList.remove("__message");
+	}
+
+	if (document.body.classList.contains("overflow-hidden")) {
+		document.body.classList.remove("overflow-hidden");
 	}
 }
 
@@ -788,6 +808,7 @@ function removeBook() {
 
 		if (!isCheckTrue) return;
 		currentBookCard.classList.add("hidden");
+		currentBookCard.ariaHidden = "true";
 
 		const isAllTemporalRemoved =
 			currentBookItems.every((book) => book.classList.contains("hidden"));
@@ -803,6 +824,7 @@ function removeBook() {
 	});
 
 	uncheckAllBtn.disabled = true;
+	confirmBtn.disabled = false;
 }
 
 function confirmUpdate() {
@@ -827,5 +849,46 @@ function confirmUpdate() {
 		showMoreBtn.classList.add("hidden");
 	}
 
+	confirmBtn.disabled = true;
+
 	finishUpdate();
+}
+
+function editBook(event) {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+	const currentCover = document.createElement("img");
+	const currentPreview = addBookModal.querySelector(".__preview");
+	const currentTitle = addBookModal.querySelector(".__title");
+	const currentVol = addBookModal.querySelector(".__vol");
+	const currentAuthor = addBookModal.querySelector(".__author");
+	const currentLink = addBookModal.querySelector(".__link");
+	const currentReadCheckInput = addBookModal.querySelector(".__read-check");
+
+	currentCover.classList.add("__img-cover", "img-size");
+
+	saveBtn.removeEventListener("click", addBook);
+
+	scroll({
+		top: 0,
+		behavior: "smooth",
+	});
+
+	document.body.classList.add("overflow-hidden");
+
+	currentBookItems.forEach((item, index) => {
+		if (item.id === event.currentTarget.dataset.id) {
+			const book = myLibrary[index];
+
+			console.log(book);
+
+			// ##COVER
+			currentCover.src = book.cover;
+			currentCover.alt = `${book.title} cover`;
+			currentPreview.firstElementChild.replaceWith(currentCover);
+
+			// ##TITLE
+			currentTitle.value = book.title;
+		}
+	});
 }

@@ -525,3 +525,7 @@ content:
 	object-fit: contain;
 	object-position: center;
 }
+
+.invincible-book {
+	display: none;
+}

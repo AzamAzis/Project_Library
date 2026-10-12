@@ -60,7 +60,7 @@ const bookThree = {
 
 const myLibrary = [bookOne, bookTwo, bookThree];
 
-let initialDisplay = 0;
+let currentDisplay = 0;
 let nextDisplay = 1;
 let isRemoved = true;
 
@@ -169,7 +169,7 @@ for (const book of myLibrary) {
 const checkboxes = bookContainer.querySelectorAll(".__checkbox");
 const checkboxItems = [...checkboxes];
 
-const next = getNextBook(initialDisplay, nextDisplay);
+const next = getNextBook(currentDisplay);
 const bookContainerGap = Number.parseFloat(getComputedStyle(bookContainer).gap);
 const initialBookHeight = getBookHeight(next);
 let initialBookContainerHeight = getBookContainerHeight(initialBookHeight, bookContainerGap);
@@ -259,12 +259,14 @@ checkboxItems.forEach((item) => {
 // ||FUNCTIONS
 function toResponsive() {
 	const smallScreen = screen.matches;
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
 
 	if (smallScreen) {
 		initialBookContainerHeight =
 			getBookContainerHeight(initialBookHeight, bookContainerGap)
 		;
-		initialDisplay = 0;
+		currentDisplay = 0;
 		nextDisplay = 1;
 		if (!isRemoved) {
 			createPreviewText(preview);
@@ -283,13 +285,20 @@ function toResponsive() {
 }
 
 function showMore() {
-	initialDisplay++;
+	currentDisplay++;
 	nextDisplay++;
-	const nextBook = getNextBook(initialDisplay, nextDisplay);
+	const nextBook = getNextBook(currentDisplay);
+
+	console.log(currentDisplay, nextDisplay, nextBook);
+
+	if (
+		!(nextDisplay > myLibrary.length) &&
+		nextBook.classList.contains("invincible-book")
+	) {
+		nextBook.classList.remove("invincible-book");
+	}
 
 	if (nextDisplay <= myLibrary.length) {
-	removeHidden(nextBook);
-
 	const height = getBookHeight(nextBook) + bookContainerGap;
 	initialBookContainerHeight += height;
 	setHeight(bookContainer, initialBookContainerHeight);
@@ -305,7 +314,7 @@ function showMore() {
 		return;
 	} else if (nextDisplay > myLibrary.length) {
 		showMoreBtn.textContent = "Show More";
-		initialDisplay = 0;
+		currentDisplay = 0;
 		nextDisplay = 1;
 		initialBookContainerHeight =
 			getBookContainerHeight(initialBookHeight, bookContainerGap)
@@ -319,9 +328,10 @@ function showMore() {
 function hideBook() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
-	currentBookItems.forEach((item, index, array) => {
-		if (array[index] === array[0]) return;
-		removeHidden(item);
+	currentBookItems.forEach((item, index) => {
+		if (index !== 0) {
+			item.classList.add("invincible-book");
+		}
 	});
 }
 
@@ -329,7 +339,9 @@ function unHideBook() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
 	currentBookItems.forEach((item) => {
-		removeHidden(item);
+		if (item.classList.contains("invincible-book")) {
+			item.classList.remove("invincible-book");
+		}
 	});
 }
 
@@ -353,10 +365,10 @@ function overflowUnHide(item) {
 	item.style.overflow = "visible";
 }
 
-function getNextBook(initialDisplay, nextDisplay) {
+function getNextBook(currentDisplay) {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
-	const storage = currentBookItems[nextDisplay - initialDisplay];
+	const storage = currentBookItems[currentDisplay];
 	return storage;
 }
 

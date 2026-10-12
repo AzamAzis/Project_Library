@@ -189,9 +189,11 @@ confirmBtn.addEventListener("click", confirmUpdate);
 checkAllBtn.addEventListener("click", checkAll);
 uncheckAllBtn.addEventListener("click", uncheckAll);
 
+// ||OPEN DIALOG
+addBookBtn.addEventListener("click", bodyOverflowHide);
+
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
-
 
 // ||ADD PREVIEW
 coverInput.addEventListener("change", (event) => {
@@ -284,8 +286,9 @@ function showMore() {
 	initialDisplay++;
 	nextDisplay++;
 	const nextBook = getNextBook(initialDisplay, nextDisplay);
+
 	if (nextDisplay <= myLibrary.length) {
-	removeHidden(nextBook[0]);
+	removeHidden(nextBook);
 
 	const height = getBookHeight(nextBook) + bookContainerGap;
 	initialBookContainerHeight += height;
@@ -353,12 +356,12 @@ function overflowUnHide(item) {
 function getNextBook(initialDisplay, nextDisplay) {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
-	const storage = currentBookItems.slice(initialDisplay, nextDisplay);
+	const storage = currentBookItems[nextDisplay - initialDisplay];
 	return storage;
 }
 
 function getBookHeight(book) {
-	const bookHeight = book[0].getBoundingClientRect().height;
+	const bookHeight = book.getBoundingClientRect().height;
 	return bookHeight;
 }
 
@@ -512,6 +515,13 @@ function addBook(event) {
 
 	if (updateBtn.disabled) {
 		updateBtn.disabled = false;
+	}
+
+	if (
+		(nextDisplay <= myLibrary.length) &&
+		(showMoreBtn.textContent === "Show Less")
+	) {
+		showMoreBtn.textContent = "Show More";
 	}
 
 	if (document.body.classList.contains("hidden")) {
@@ -757,6 +767,10 @@ function cancelUpdate() {
 		showMoreBtn.classList.remove("hidden");
 	}
 
+	if (nextDisplay === myLibrary.length) {
+		resizeBookContainerHeight(currentBookItems);
+	}
+
 	finishUpdate();
 }
 
@@ -808,7 +822,6 @@ function removeBook() {
 
 		if (!isCheckTrue) return;
 		currentBookCard.classList.add("hidden");
-		currentBookCard.ariaHidden = "true";
 
 		const isAllTemporalRemoved =
 			currentBookItems.every((book) => book.classList.contains("hidden"));
@@ -823,8 +836,26 @@ function removeBook() {
 		}
 	});
 
+	if (nextDisplay === myLibrary.length) {
+		showMoreBtn.textContent = "Show Less";
+
+		resizeBookContainerHeight(currentBookItems);
+	}
+
 	uncheckAllBtn.disabled = true;
 	confirmBtn.disabled = false;
+}
+
+function resizeBookContainerHeight(currentBook) {
+	const totalBookHeight = currentBook.reduce(sumHeight, 0);
+	const currentTotalBook = bookContainerGap * (myLibrary.length - 1);
+	bookContainer.style.height = `${totalBookHeight + currentTotalBook}px`;
+}
+
+function sumHeight(accumulator, currentValue) {
+	const currentBookHeight = currentValue.getBoundingClientRect().height;
+	const totalHeight = accumulator + currentBookHeight;
+	return totalHeight;
 }
 
 function confirmUpdate() {
@@ -869,18 +900,11 @@ function editBook(event) {
 
 	saveBtn.removeEventListener("click", addBook);
 
-	scroll({
-		top: 0,
-		behavior: "smooth",
-	});
-
-	document.body.classList.add("overflow-hidden");
+	bodyOverflowHide();
 
 	currentBookItems.forEach((item, index) => {
 		if (item.id === event.currentTarget.dataset.id) {
 			const book = myLibrary[index];
-
-			console.log(book);
 
 			// ##COVER
 			currentCover.src = book.cover;
@@ -891,4 +915,13 @@ function editBook(event) {
 			currentTitle.value = book.title;
 		}
 	});
+}
+
+function bodyOverflowHide() {
+	scroll({
+		top: 0,
+		behavior: "smooth",
+	});
+
+	document.body.classList.add("overflow-hidden");
 }

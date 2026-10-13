@@ -18,11 +18,6 @@
 	}
 }
 
-.main {
-	position: relative;
-	height: 100%; /* !TEST */
-}
-
 .added {
 	justify-self: center;
 	position: absolute;
@@ -191,7 +186,7 @@
 }
 
 .go-up {
-	animation: 1s linear 0.2s go-up;
+	animation: 1s linear 0.3s go-up;
 }
 
 @keyframes go-up {

@@ -17,8 +17,11 @@ const volInput = addBookModal.querySelector(".__vol");
 const authorInput = addBookModal.querySelector(".__author");
 const linkInput = addBookModal.querySelector(".__link");
 const markAsReadInput = addBookModal.querySelector(".__read-check");
+const upBtn = document.querySelector(".up");
+const upIcon = upBtn.querySelector(".__icon");
 
 const screen = window.matchMedia("(width < 680px)");
+const hoverCompatibility = window.matchMedia("(hover: hover)").matches;
 
 const preview = document.querySelector(".__preview");
 const previewPrevChild = preview.firstElementChild;
@@ -256,11 +259,12 @@ checkboxItems.forEach((item) => {
 	item.addEventListener("change", toCheck);
 });
 
+// ||UP
+upBtn.addEventListener("click", goUp);
+
 // ||FUNCTIONS
 function toResponsive() {
 	const smallScreen = screen.matches;
-	const currentBooks = bookContainer.querySelectorAll(".book");
-	const currentBookItems = [...currentBooks];
 
 	if (smallScreen) {
 		initialBookContainerHeight =
@@ -268,10 +272,29 @@ function toResponsive() {
 		;
 		currentDisplay = 0;
 		nextDisplay = 1;
+
 		if (!isRemoved) {
 			createPreviewText(preview);
 			isRemoved = true;
 		}
+
+		window.addEventListener("scroll", () => {
+			const currentBooks = bookContainer.querySelectorAll(".book");
+			const currentBookItems = [...currentBooks];
+			const secondBookLocation = currentBookItems[1].getBoundingClientRect().y;
+			if (
+				nextDisplay > 1 &&
+				window.scrollY > secondBookLocation
+			) {
+				upBtn.classList.remove("hidden");
+			} else if (
+				window.scrollY < secondBookLocation &&
+				!(upBtn.classList.contains("go-up"))
+			) {
+				upBtn.classList.add("hidden");
+			}
+		});
+
 		showMoreBtn.classList.remove("hidden");
 		setHeight(bookContainer, initialBookContainerHeight);
 		overflowHide(bookContainer);
@@ -288,8 +311,6 @@ function showMore() {
 	currentDisplay++;
 	nextDisplay++;
 	const nextBook = getNextBook(currentDisplay);
-
-	console.log(currentDisplay, nextDisplay, nextBook);
 
 	if (
 		!(nextDisplay > myLibrary.length) &&
@@ -322,6 +343,7 @@ function showMore() {
 		setHeight(bookContainer, initialBookContainerHeight);
 		bookContainer.addEventListener("transitionend", hideBook);
 		isRemoved = false;
+		upBtn.classList.add("hidden");
 	}
 }
 
@@ -343,10 +365,6 @@ function unHideBook() {
 			item.classList.remove("invincible-book");
 		}
 	});
-}
-
-function removeHidden(item) {
-	item.style.display = "";
 }
 
 function setHeight(item, height) {
@@ -513,7 +531,7 @@ function addBook(event) {
 	// !!ADD TO BOOK
 	newBookCard.append(newCheckbox, newCover, newTitle, newDetail, newMark, newEditBtn);
 
-	if (myLibrary.length < 6) {
+	if (myLibrary.length <= 6) {
 		bookContainer.appendChild(newBookCard);
 	}
 
@@ -536,8 +554,8 @@ function addBook(event) {
 		showMoreBtn.textContent = "Show More";
 	}
 
-	if (document.body.classList.contains("hidden")) {
-		document.body.classList.remove("hidden");
+	if (document.body.classList.contains("overflow-hidden")) {
+		document.body.classList.remove("overflow-hidden");
 	}
 
 	preview.firstElementChild.remove();
@@ -936,4 +954,46 @@ function bodyOverflowHide() {
 	});
 
 	document.body.classList.add("overflow-hidden");
+}
+
+function toHoverEnter() {
+	upIcon.src = "assets/img/other/boy-up.png";
+	upIcon.alt = "a boy is pointing upwards";
+}
+
+function toHoverLeave() {
+	upIcon.src = "assets/img/other/boy-normal.png";
+	upIcon.alt = "a boy is standing";
+}
+
+function goUp() {
+	upBtn.removeEventListener("mouseenter", toHoverEnter);
+	upBtn.removeEventListener("mouseleave", toHoverLeave);
+	upIcon.src = "assets/img/other/boy-flying.png";
+	upIcon.alt = "a boy is flying";
+	upBtn.classList.add("go-up");
+
+	setTimeout(() => {
+		scroll({
+			top: 0,
+			behavior: "smooth",
+		});
+	}, 250);
+
+	upBtn.addEventListener("animationend", hideBoy);
+}
+
+function hideBoy() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+	const secondBookLocationY = currentBookItems[1].getBoundingClientRect().y;
+	upBtn.classList.remove("go-up");
+	upIcon.src = "assets/img/other/boy-normal.png";
+	upIcon.alt = "a boy is standing";
+
+	if (window.scrollY > secondBookLocationY) {
+		upBtn.classList.remove("hidden");
+	} else {
+		upBtn.classList.add("hidden");
+	}
 }

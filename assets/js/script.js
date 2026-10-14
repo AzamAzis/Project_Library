@@ -260,6 +260,14 @@ checkboxItems.forEach((item) => {
 });
 
 // ||UP
+const req = new Request("assets/img/other/boy-flying.png");
+window.fetch(req).then((response) => {
+	if (!response.ok) {
+		throw Error("hello");
+	}
+
+	return response.blob();
+});
 upBtn.addEventListener("click", goUp);
 
 // ||FUNCTIONS

@@ -330,26 +330,29 @@
 	outline-offset: 0.2rem;
 }
 
-.__read-check::before {
-content:
-	light-dark(
-		url("../img/icon/star-plus-black.svg"),
-		url("../img/icon/star-plus-white.svg")
-	);
-	display: inline-block;
-	height: 1.5rem;
-	vertical-align: top;
-}
-
+.__read-check::before,
 .__read-check:checked::before {
-	content:
-		light-dark(
-			var(--star-check-black),
-			var(--star-check-white)
-		);
+	content: "";
 	display: inline-block;
 	height: 1.5rem;
 	width: 1.5rem;
+	vertical-align: top;
+}
+
+.__read-check::before {
+	background:
+		light-dark(var(--star-plus-black), var(--star-plus-white))
+		no-repeat
+		center / contain
+	;
+}
+
+.__read-check:checked::before {
+	background:
+		light-dark(var(--star-check-black), var(--star-check-white))
+		no-repeat
+		center / contain
+	;
 }
 
 .book-container {

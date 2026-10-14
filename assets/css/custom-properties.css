@@ -56,6 +56,8 @@
 	color-scheme: light dark;
 
 	/* **STAR */
+	--star-plus-black: url("../img/icon/star-plus-black.svg");
+	--star-plus-white: url("../img/icon/star-plus-white.svg");
 	--star-check-black: url("../img/icon/star-check-black.svg");
 	--star-check-white: url("../img/icon/star-check-white.svg");
 }

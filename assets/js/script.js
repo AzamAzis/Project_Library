@@ -37,7 +37,7 @@ const bookOne = {
 	author: "AidaIro",
 	link: "https://www.amazon.com/dp/B074QTZGJ3?lv=shuf&channelId=500&plpRedirect=mhFallback",
 	markAsRead: true,
-	id: crypto.randomUUID(),
+	id: `book-${crypto.randomUUID()}`,
 };
 
 const bookTwo = {
@@ -47,7 +47,7 @@ const bookTwo = {
 	author: "Akihito Tsukushi",
 	link: "https://www.amazon.com/dp/1626927731?lv=shuf&channelId=500&plpRedirect=mhFallback",
 	markAsRead: true,
-	id: crypto.randomUUID(),
+	id: `book-${crypto.randomUUID()}`,
 };
 
 const bookThree = {
@@ -57,7 +57,7 @@ const bookThree = {
 	author: "Utsugi Unohana",
 	link: "https://www.ebay.com/itm/396332939412",
 	markAsRead: true,
-	id: crypto.randomUUID(),
+	id: `book-${crypto.randomUUID()}`,
 }
 
 const myLibrary = [bookOne, bookTwo, bookThree];
@@ -84,14 +84,14 @@ for (const book of myLibrary) {
 
 	// ##BOOK
 	newBookCard.classList.add("book");
-	newBookCard.id = book.id;
+	newBookCard.dataset.id = book.id;
 
 	// ##CHECKBOX
 	newCheckbox.classList.add("__checkbox", "hidden");
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
-	newCheckbox.dataset.id = newBookCard.id;
+	newCheckbox.dataset.id = newBookCard.dataset.id;
 
 	// ##COVER
 	newCover.classList.add("__cover", "img-size");
@@ -116,6 +116,7 @@ for (const book of myLibrary) {
 
 	// ##LINK CONTAINER
 	newLinkContainer.classList.add("link-container");
+	newLinkContainer.textContent = "Link: ";
 
 	// ##LINK
 	newLink.classList.add("__link");
@@ -133,7 +134,7 @@ for (const book of myLibrary) {
 
 	// ##MARK INPUT
 	newReadCheckInput.classList.add("__read-check");
-	newReadCheckInput.id = book.id;
+	newReadCheckInput.id = newBookCard.dataset.id;
 	newReadCheckInput.type = "checkbox";
 	newReadCheckInput.checked = book.markAsRead;
 
@@ -147,7 +148,7 @@ for (const book of myLibrary) {
 	newEditBtn.type = "button";
 	newEditBtn.commandForElement = addBookModal;
 	newEditBtn.command = "show-modal";
-	newEditBtn.dataset.id = newBookCard.id;
+	newEditBtn.dataset.id = newBookCard.dataset.id;
 	newEditBtn.textContent = "Edit";
 	newEditBtn.addEventListener("click", editBook);
 
@@ -437,14 +438,14 @@ function addBook(event) {
 
 	//##BOOK
 	newBookCard.classList.add("book");
-	newBookCard.id = randomId;
+	newBookCard.dataset.id = `book-${randomId}`;
 
 	// ##CHECKBOX
 	newCheckbox.classList.add("__checkbox", "hidden");
 	newCheckbox.name = "book";
 	newCheckbox.type = "checkbox";
 	newCheckbox.ariaDescription = "Click to select the book.";
-	newCheckbox.dataset.id = newBookCard.id;
+	newCheckbox.dataset.id = newBookCard.dataset.id;
 	newCheckbox.addEventListener("change", toCheck);
 
 	// ##COVER
@@ -491,6 +492,7 @@ function addBook(event) {
 
 	// ##MARK INPUT
 	newReadCheckInput.classList.add("__read-check");
+	newReadCheckInput.id = newBookCard.dataset.id;
 	newReadCheckInput.type = "checkbox";
 	newReadCheckInput.checked = markAsReadInput.checked;
 
@@ -505,7 +507,7 @@ function addBook(event) {
 	newEditBtn.textContent = "Edit";
 	newEditBtn.commandForElement = addBookModal;
 	newEditBtn.command = "show-modal";
-	newEditBtn.dataset.id = newBookCard.id;
+	newEditBtn.dataset.id = newBookCard.dataset.id;
 	newEditBtn.addEventListener("click", editBook);
 
 	addBookToLibrary(
@@ -515,7 +517,7 @@ function addBook(event) {
 		authorInput.value,
 		linkInput.value,
 		markAsReadInput.checked,
-		newBookCard.id,
+		newBookCard.dataset.id,
 	);
 
 	// !!ADD TO LINK CONTAINER
@@ -684,7 +686,7 @@ function createPreviewText(parent) {
 function readFileImg(item, file) {
 	fileReader.addEventListener("load", () => {
 		item.src = fileReader.result;
-		item.alt = item.name;
+		item.alt = `${file.name}`;
 		item.classList.add("__img-cover", "img-size");
 	});
 
@@ -896,7 +898,7 @@ function confirmUpdate() {
 
 		if (!isTemporalRemoved) return;
 
-		const bookCurrentLocation = myLibrary.findIndex((book) => book.id === item.id);
+		const bookCurrentLocation = myLibrary.findIndex((book) => book.id === item.dataset.id);
 		myLibrary.splice(bookCurrentLocation, 1);
 
 		item.remove();
@@ -917,8 +919,8 @@ function confirmUpdate() {
 function editBook(event) {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
-	const currentCover = document.createElement("img");
 	const currentPreview = addBookModal.querySelector(".__preview");
+	const currentCover = document.createElement("img");
 	const currentTitle = addBookModal.querySelector(".__title");
 	const currentVol = addBookModal.querySelector(".__vol");
 	const currentAuthor = addBookModal.querySelector(".__author");
@@ -932,8 +934,13 @@ function editBook(event) {
 	bodyOverflowHide();
 
 	currentBookItems.forEach((item, index) => {
-		if (item.id === event.currentTarget.dataset.id) {
+		if (item.dataset.id === event.currentTarget.dataset.id) {
 			const book = myLibrary[index];
+			const newCover = item.querySelector(".__cover");
+			const newTitle = item.querySelector(".__title");
+			const newVol = item.querySelector(".__vol");
+			const newAuthor = item.querySelector(".__author");
+			const newLink = item.querySelector(".__link");
 
 			// ##COVER
 			currentCover.src = book.cover;
@@ -942,6 +949,31 @@ function editBook(event) {
 
 			// ##TITLE
 			currentTitle.value = book.title;
+
+			// ##VOL
+			currentVol.value = book.vol;
+
+			// ##AUTHOR
+			currentAuthor.value = book.author;
+
+			// ##LINK
+			currentLink.value = book.link;
+
+			// ##READ CHECKBOX
+			currentReadCheckInput.checked = book.markAsRead;
+
+			saveBtn.addEventListener("click", (event) => {
+				event.preventDefault();
+
+				const filesCoverImg = coverInput.files;
+
+				// ##NEW COVER
+				for (const file of filesCoverImg) {
+					readFileImg(newCover, file);
+				}
+
+				event.currentTarget.addEventListener("click", addBook);
+			}, {once: true});
 		}
 	});
 }
@@ -955,19 +987,7 @@ function bodyOverflowHide() {
 	document.body.classList.add("overflow-hidden");
 }
 
-// function toHoverEnter() {
-// 	upIcon.src = "assets/img/other/boy-up.png";
-// 	upIcon.alt = "a boy is pointing upwards";
-// }
-
-// function toHoverLeave() {
-// 	upIcon.src = "assets/img/other/boy-normal.png";
-// 	upIcon.alt = "a boy is standing";
-// }
-
 function goUp() {
-	// upBtn.removeEventListener("mouseenter", toHoverEnter);
-	// upBtn.removeEventListener("mouseleave", toHoverLeave);
 	upIcon.src = "assets/img/other/boy-flying.png";
 	upIcon.alt = "a boy is flying";
 	upBtn.classList.add("go-up");

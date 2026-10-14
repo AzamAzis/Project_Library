@@ -58,7 +58,7 @@ const bookThree = {
 	link: "https://www.ebay.com/itm/396332939412",
 	markAsRead: true,
 	id: `book-${crypto.randomUUID()}`,
-}
+};
 
 const myLibrary = [bookOne, bookTwo, bookThree];
 
@@ -162,7 +162,14 @@ for (const book of myLibrary) {
 	newDetail.append(newVol, newAuthor, newLinkContainer);
 
 	// !!ADD TO BOOK
-	newBookCard.append(newCheckbox ,newCover, newTitle, newDetail, newMark, newEditBtn);
+	newBookCard.append(
+		newCheckbox,
+		newCover,
+		newTitle,
+		newDetail,
+		newMark,
+		newEditBtn,
+	);
 
 	if (myLibrary.length <= 6) {
 		bookContainer.appendChild(newBookCard);
@@ -175,7 +182,10 @@ const checkboxItems = [...checkboxes];
 const next = getNextBook(currentDisplay);
 const bookContainerGap = Number.parseFloat(getComputedStyle(bookContainer).gap);
 const initialBookHeight = getBookHeight(next);
-let initialBookContainerHeight = getBookContainerHeight(initialBookHeight, bookContainerGap);
+let initialBookContainerHeight = getBookContainerHeight(
+	initialBookHeight,
+	bookContainerGap,
+);
 
 // ||RESPONSIVENESS
 toResponsive();
@@ -227,9 +237,9 @@ window.addEventListener("drop", (event) => {
 
 // ||DRAGOVER
 preview.addEventListener("dragover", (event) => {
-	const fileItem =
-		[...event.dataTransfer.items].filter((item) => item.kind === "file")
-	;
+	const fileItem = [...event.dataTransfer.items].filter(
+		(item) => item.kind === "file",
+	);
 
 	if (fileItem.length > 0) {
 		event.preventDefault();
@@ -242,9 +252,9 @@ preview.addEventListener("dragover", (event) => {
 });
 
 window.addEventListener("dragover", (event) => {
-	const fileItems =
-		[...event.dataTransfer.items].filter((item) => item.kind === "file")
-	;
+	const fileItems = [...event.dataTransfer.items].filter(
+		(item) => item.kind === "file",
+	);
 
 	if (fileItems.length > 0) {
 		event.preventDefault();
@@ -260,14 +270,6 @@ checkboxItems.forEach((item) => {
 });
 
 // ||UP
-const req = new Request("assets/img/other/boy-flying.png");
-window.fetch(req).then((response) => {
-	if (!response.ok) {
-		throw Error("hello");
-	}
-
-	return response.blob();
-});
 upBtn.addEventListener("click", goUp);
 
 // ||FUNCTIONS
@@ -275,9 +277,10 @@ function toResponsive() {
 	const smallScreen = screen.matches;
 
 	if (smallScreen) {
-		initialBookContainerHeight =
-			getBookContainerHeight(initialBookHeight, bookContainerGap)
-		;
+		initialBookContainerHeight = getBookContainerHeight(
+			initialBookHeight,
+			bookContainerGap,
+		);
 		currentDisplay = 0;
 		nextDisplay = 1;
 
@@ -290,14 +293,11 @@ function toResponsive() {
 			const currentBooks = bookContainer.querySelectorAll(".book");
 			const currentBookItems = [...currentBooks];
 			const secondBookLocation = currentBookItems[1].getBoundingClientRect().y;
-			if (
-				nextDisplay > 1 &&
-				window.scrollY > secondBookLocation
-			) {
+			if (nextDisplay > 1 && window.scrollY > secondBookLocation) {
 				upBtn.classList.remove("hidden");
 			} else if (
 				window.scrollY < secondBookLocation &&
-				!(upBtn.classList.contains("go-up"))
+				!upBtn.classList.contains("go-up")
 			) {
 				upBtn.classList.add("hidden");
 			}
@@ -328,9 +328,9 @@ function showMore() {
 	}
 
 	if (nextDisplay <= myLibrary.length) {
-	const height = getBookHeight(nextBook) + bookContainerGap;
-	initialBookContainerHeight += height;
-	setHeight(bookContainer, initialBookContainerHeight);
+		const height = getBookHeight(nextBook) + bookContainerGap;
+		initialBookContainerHeight += height;
+		setHeight(bookContainer, initialBookContainerHeight);
 	}
 
 	if (!isRemoved) {
@@ -345,9 +345,10 @@ function showMore() {
 		showMoreBtn.textContent = "Show More";
 		currentDisplay = 0;
 		nextDisplay = 1;
-		initialBookContainerHeight =
-			getBookContainerHeight(initialBookHeight, bookContainerGap)
-		;
+		initialBookContainerHeight = getBookContainerHeight(
+			initialBookHeight,
+			bookContainerGap,
+		);
 		setHeight(bookContainer, initialBookContainerHeight);
 		bookContainer.addEventListener("transitionend", hideBook);
 		isRemoved = false;
@@ -438,7 +439,7 @@ function addBook(event) {
 		return;
 	} else {
 		addBookModal.close();
-	};
+	}
 
 	if (updateBtn.disabled) {
 		updateBtn.disabled = false;
@@ -538,7 +539,14 @@ function addBook(event) {
 	newDetail.append(newTitle, newVol, newAuthor, newLinkContainer);
 
 	// !!ADD TO BOOK
-	newBookCard.append(newCheckbox, newCover, newTitle, newDetail, newMark, newEditBtn);
+	newBookCard.append(
+		newCheckbox,
+		newCover,
+		newTitle,
+		newDetail,
+		newMark,
+		newEditBtn,
+	);
 
 	if (myLibrary.length <= 6) {
 		bookContainer.appendChild(newBookCard);
@@ -557,8 +565,8 @@ function addBook(event) {
 	}
 
 	if (
-		(nextDisplay <= myLibrary.length) &&
-		(showMoreBtn.textContent === "Show Less")
+		nextDisplay <= myLibrary.length &&
+		showMoreBtn.textContent === "Show Less"
 	) {
 		showMoreBtn.textContent = "Show More";
 	}
@@ -574,9 +582,7 @@ function addBook(event) {
 
 function createNewDetail(item, value, classDetail, ...utilities) {
 	const rawClass = classDetail.replaceAll(/__/g, "");
-	const detail =
-		rawClass.slice(0, 1).toLocaleUpperCase() + rawClass.slice(1)
-	;
+	const detail = rawClass.slice(0, 1).toLocaleUpperCase() + rawClass.slice(1);
 
 	const text = value.value ? value.value : "none";
 
@@ -603,11 +609,9 @@ function displayImage(files) {
 
 function dropHandler(ev) {
 	ev.preventDefault();
-	const file =
-		[...ev.dataTransfer.items]
-			.map((item) => item.getAsFile())
-			.filter((file) => file)
-	;
+	const file = [...ev.dataTransfer.items]
+		.map((item) => item.getAsFile())
+		.filter((file) => file);
 	displayImage(file);
 
 	coverInput.files = ev.dataTransfer.files;
@@ -637,9 +641,14 @@ function toClose() {
 }
 
 function toValid() {
-	if (titleInput.validity.valid && invalidMessage.classList.contains("__message")) {
+	if (
+		titleInput.validity.valid &&
+		invalidMessage.classList.contains("__message")
+	) {
 		invalidMessage.classList.remove("__message");
-		invalidMessage.addEventListener("transitionend", toRemoveMessage, {once: true});
+		invalidMessage.addEventListener("transitionend", toRemoveMessage, {
+			once: true,
+		});
 	}
 }
 
@@ -700,7 +709,7 @@ function readFileImg(item, file) {
 
 	if (file) {
 		fileReader.readAsDataURL(file);
-	};
+	}
 }
 
 function update() {
@@ -731,7 +740,8 @@ function checkAll() {
 	const currentCheckboxItems = [...currentCheckboxes];
 
 	currentCheckboxItems.forEach((item, index) => {
-		const isTemporalRemoved = currentBookItems[index].classList.contains("hidden");
+		const isTemporalRemoved =
+			currentBookItems[index].classList.contains("hidden");
 		item.checked = true;
 
 		if (isTemporalRemoved) {
@@ -788,8 +798,9 @@ function toCheck(event) {
 function cancelUpdate() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
-	const isAllTemporalRemoved =
-		currentBookItems.every((book) => book.classList.contains("hidden"));
+	const isAllTemporalRemoved = currentBookItems.every((book) =>
+		book.classList.contains("hidden"),
+	);
 
 	currentBookItems.forEach((item) => {
 		const isTemporalRemoved = item.classList.contains("hidden");
@@ -843,7 +854,7 @@ function finishUpdate() {
 	});
 
 	currentEditBtnItems.forEach((item) => {
-		item.classList.add("hidden")
+		item.classList.add("hidden");
 	});
 }
 
@@ -855,15 +866,17 @@ function removeBook() {
 
 	currentCheckboxItems.forEach((item) => {
 		const isCheckTrue = item.checked;
-		const bookLocation =
-			myLibrary.findIndex((book) => book.id === item.dataset.id);
+		const bookLocation = myLibrary.findIndex(
+			(book) => book.id === item.dataset.id,
+		);
 		const currentBookCard = currentBookItems[bookLocation];
 
 		if (!isCheckTrue) return;
 		currentBookCard.classList.add("hidden");
 
-		const isAllTemporalRemoved =
-			currentBookItems.every((book) => book.classList.contains("hidden"));
+		const isAllTemporalRemoved = currentBookItems.every((book) =>
+			book.classList.contains("hidden"),
+		);
 
 		if (isAllTemporalRemoved) {
 			showMoreBtn.classList.add("hidden");
@@ -906,7 +919,9 @@ function confirmUpdate() {
 
 		if (!isTemporalRemoved) return;
 
-		const bookCurrentLocation = myLibrary.findIndex((book) => book.id === item.dataset.id);
+		const bookCurrentLocation = myLibrary.findIndex(
+			(book) => book.id === item.dataset.id,
+		);
 		myLibrary.splice(bookCurrentLocation, 1);
 
 		item.remove();
@@ -970,18 +985,22 @@ function editBook(event) {
 			// ##READ CHECKBOX
 			currentReadCheckInput.checked = book.markAsRead;
 
-			saveBtn.addEventListener("click", (event) => {
-				event.preventDefault();
+			saveBtn.addEventListener(
+				"click",
+				(event) => {
+					event.preventDefault();
 
-				const filesCoverImg = coverInput.files;
+					const filesCoverImg = coverInput.files;
 
-				// ##NEW COVER
-				for (const file of filesCoverImg) {
-					readFileImg(newCover, file);
-				}
+					// ##NEW COVER
+					for (const file of filesCoverImg) {
+						readFileImg(newCover, file);
+					}
 
-				event.currentTarget.addEventListener("click", addBook);
-			}, {once: true});
+					event.currentTarget.addEventListener("click", addBook);
+				},
+				{once: true},
+			);
 		}
 	});
 }

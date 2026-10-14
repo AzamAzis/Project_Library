@@ -21,7 +21,6 @@ const upBtn = document.querySelector(".up");
 const upIcon = upBtn.querySelector(".__icon");
 
 const screen = window.matchMedia("(width < 680px)");
-const hoverCompatibility = window.matchMedia("(hover: hover)").matches;
 
 const preview = document.querySelector(".__preview");
 const previewPrevChild = preview.firstElementChild;
@@ -956,19 +955,19 @@ function bodyOverflowHide() {
 	document.body.classList.add("overflow-hidden");
 }
 
-function toHoverEnter() {
-	upIcon.src = "assets/img/other/boy-up.png";
-	upIcon.alt = "a boy is pointing upwards";
-}
+// function toHoverEnter() {
+// 	upIcon.src = "assets/img/other/boy-up.png";
+// 	upIcon.alt = "a boy is pointing upwards";
+// }
 
-function toHoverLeave() {
-	upIcon.src = "assets/img/other/boy-normal.png";
-	upIcon.alt = "a boy is standing";
-}
+// function toHoverLeave() {
+// 	upIcon.src = "assets/img/other/boy-normal.png";
+// 	upIcon.alt = "a boy is standing";
+// }
 
 function goUp() {
-	upBtn.removeEventListener("mouseenter", toHoverEnter);
-	upBtn.removeEventListener("mouseleave", toHoverLeave);
+	// upBtn.removeEventListener("mouseenter", toHoverEnter);
+	// upBtn.removeEventListener("mouseleave", toHoverLeave);
 	upIcon.src = "assets/img/other/boy-flying.png";
 	upIcon.alt = "a boy is flying";
 	upBtn.classList.add("go-up");

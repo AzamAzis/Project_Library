@@ -21,21 +21,10 @@ img {
 	</style>
 </head>
 <body>P
-	<input type="file" /><br />
-	<div>Preview</div>
-
-
-
+	<input type="url">
 <script>
-
-const array = [1, 2, 3];
-console.log(array);
-let g = 0;
-array.forEach((item, index, array) => {
-	array.splice(index, 1);
-	if (index > 0) index--;
-	console.log(array, index)
-});
+const input = document.querySelector("input");
+console.log(input.checkValidity());
 
 </script>
 </body>

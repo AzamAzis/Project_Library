@@ -255,8 +255,7 @@
 		padding: var(--space-sm);
 	}
 
-	& .__form-title,
-	& .__input:last-of-type {
+	& .__form-title {
 		margin-block-end: var(--space-md);
 	}
 
@@ -275,8 +274,8 @@
 		margin-inline: auto;
 	}
 
-	& .__required {
-		display: none;
+	& .__required,
+	& .__incorrect-link {
 		align-self: start;
 		opacity: 0;
 		color: light-dark(var(--text-dark-red), var(--text-red));
@@ -289,6 +288,7 @@
 	}
 
 	& .__mark {
+		margin-block-start: var(--space-sm);
 		user-select: none;
 	}
 

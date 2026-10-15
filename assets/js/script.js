@@ -13,6 +13,7 @@ const form = addBookModal.querySelector(".__form");
 const coverInput = addBookModal.querySelector(".__cover");
 const titleInput = addBookModal.querySelector(".__title");
 const invalidMessage = addBookModal.querySelector(".__required");
+const invalidLink = addBookModal.querySelector(".__incorrect-link");
 const volInput = addBookModal.querySelector(".__vol");
 const authorInput = addBookModal.querySelector(".__author");
 const linkInput = addBookModal.querySelector(".__link");
@@ -21,6 +22,8 @@ const upBtn = document.querySelector(".up");
 const upIcon = upBtn.querySelector(".__icon");
 
 const screen = window.matchMedia("(width < 680px)");
+
+const controller = new AbortController();
 
 const preview = document.querySelector(".__preview");
 const previewPrevChild = preview.firstElementChild;
@@ -216,11 +219,14 @@ coverInput.addEventListener("change", (event) => {
 		preview.firstElementChild.replaceWith(cover);
 	}
 });
-
-titleInput.addEventListener("input", toValid);
+// ||SHOW INVALID INPUT MESSAGE
+titleInput.addEventListener("input", checkValidTitle);
+linkInput.addEventListener("input", checkValidLink);
 
 // ||ADD BOOK
-saveBtn.addEventListener("click", addBook);
+addBookBtn.addEventListener("click", () => {
+	saveBtn.addEventListener("click", addBook, {once: true});
+});
 
 // ||REMOVE BOOK
 removeBtn.addEventListener("click", removeBook);
@@ -270,10 +276,7 @@ checkboxItems.forEach((item) => {
 });
 
 // ||UP
-document.addEventListener("DOMContentLoaded", () => {
 	upBtn.addEventListener("click", goUp);
-});
-
 
 // ||FUNCTIONS
 function toResponsive() {
@@ -432,16 +435,23 @@ function addBook(event) {
 	const isCoverExist = cover.getAttribute("src");
 	const isTitleExist = titleInput.value;
 	const isLinkExist = linkInput.value;
+	const isLinkValid = linkInput.checkValidity();
+
+
 
 	if (!isTitleExist) {
-		addBookModal.showModal();
-		invalidMessage.style.display = "block";
-		setTimeout(() => {
-			invalidMessage.classList.add("__message");
-		}, 0);
+		showInvalidMessage(invalidMessage);
+		if (!isLinkValid) {
+			showInvalidMessage(invalidLink);
+		}
 		return;
 	} else {
 		addBookModal.close();
+	}
+
+	if (!isLinkValid) {
+		showInvalidMessage(invalidLink);
+		return;
 	}
 
 	if (updateBtn.disabled) {
@@ -578,9 +588,16 @@ function addBook(event) {
 		document.body.classList.remove("overflow-hidden");
 	}
 
-	preview.firstElementChild.remove();
 	createPreviewText(preview);
 	form.reset();
+}
+
+function showInvalidMessage(message) {
+	addBookModal.showModal();
+	message.classList.remove("hidden");
+	setTimeout(() => {
+		message.classList.add("__message");
+	}, 0);
 }
 
 function createNewDetail(item, value, classDetail, ...utilities) {
@@ -621,17 +638,12 @@ function dropHandler(ev) {
 }
 
 function toClose() {
-	if (preview.firstElementChild !== previewPrevChild) {
-		preview.firstElementChild.replaceWith(previewPrevChild);
-	}
+	controller.abort("Stop event listener for saving a book and start event listener that adds a book");
+	createPreviewText(preview);
 
 	if (invalidMessage.classList.contains("__message")) {
 		invalidMessage.style.display = "none";
 		invalidMessage.classList.remove("__message");
-	}
-
-	if (titleInput.value) {
-		form.reset();
 	}
 
 	if (invalidMessage.classList.contains("__message")) {
@@ -641,22 +653,30 @@ function toClose() {
 	if (document.body.classList.contains("overflow-hidden")) {
 		document.body.classList.remove("overflow-hidden");
 	}
+
+	form.reset();
 }
 
-function toValid() {
+function checkValidTitle() {
+	removeMessage(titleInput, invalidMessage);
+}
+
+function checkValidLink() {
+	removeMessage(linkInput, invalidLink);
+}
+
+function removeMessage(input, invalid) {
 	if (
-		titleInput.validity.valid &&
-		invalidMessage.classList.contains("__message")
+		input.validity.valid &&
+		invalid.classList.contains("__message")
 	) {
-		invalidMessage.classList.remove("__message");
-		invalidMessage.addEventListener("transitionend", toRemoveMessage, {
-			once: true,
-		});
+		invalid.classList.remove("__message");
+		invalid.addEventListener("transitionend", hideMessage, {once: true});
 	}
 }
 
-function toRemoveMessage(e) {
-	e.currentTarget.style.display = "none";
+function hideMessage(e) {
+	e.currentTarget.classList.add("hidden");
 }
 
 function Book(cover, title, vol, author, link, markAsRead, id) {
@@ -697,10 +717,9 @@ function addBookToLibrary(cover, title, vol, author, link, markAsRead, id) {
 }
 
 function createPreviewText(parent) {
-	const previewText = document.createElement("p");
-	previewText.classList.add("__preview-text");
-	previewText.textContent = "Preview";
-	parent.appendChild(previewText);
+	if (parent.firstElementChild !== previewPrevChild) {
+		parent.firstElementChild.replaceWith(previewPrevChild);
+	}
 }
 
 function readFileImg(item, file) {
@@ -805,8 +824,35 @@ function cancelUpdate() {
 		book.classList.contains("hidden"),
 	);
 
-	currentBookItems.forEach((item) => {
+	currentBookItems.forEach((item, index) => {
+		const book = myLibrary[index];
+		const updatedCover = item.querySelector(".__cover");
+		const updatedTitle = item.querySelector(".__title");
+		const updatedVol = item.querySelector(".__vol");
+		const updatedAuthor = item.querySelector(".__author");
+		const updatedLink = item.querySelector(".__link");
+		const updatedReadCheckInput = item.querySelector(".__read-check");
 		const isTemporalRemoved = item.classList.contains("hidden");
+
+		updatedCover.src = book.cover;
+		updatedTitle.textContent = book.title;
+		updatedVol.textContent = `Vol: ${book.vol}`;
+		updatedAuthor.textContent = `Author: ${book.author}`;
+		if (book.link) {
+			updatedLink.href = book.link;
+			if (updatedLink.textContent !== "Visit me.") {
+				updatedLink.textContent = "Visit me.";
+			}
+		} else {
+			if(updatedLink.href) {
+				updatedLink.removeAttribute("href");
+				if (updatedLink.textContent !== "none") {
+					updatedLink.textContent = "none";
+				}
+			}
+		}
+		updatedReadCheckInput.checked = book.markAsRead;
+
 		if (isTemporalRemoved) {
 			item.classList.remove("hidden");
 		}
@@ -917,18 +963,33 @@ function confirmUpdate() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
 
-	currentBookItems.forEach((item) => {
+	currentBookItems.forEach((item, index) => {
+		const book = myLibrary[index];
+		const updatedCover = item.querySelector(".__cover");
+		const updatedTitle = item.querySelector(".__title");
+		const updatedVol = item.querySelector(".__vol");
+		const updatedAuthor = item.querySelector(".__author");
+		const updatedLink = item.querySelector(".__link");
+		const updatedReadCheckInput = item.querySelector(".__read-check");
 		const isTemporalRemoved = item.classList.contains("hidden");
 
-		if (!isTemporalRemoved) return;
-
-		const bookCurrentLocation = myLibrary.findIndex(
-			(book) => book.id === item.dataset.id,
-		);
-		myLibrary.splice(bookCurrentLocation, 1);
-
-		item.remove();
+		if (!isTemporalRemoved) {
+			book.cover = updatedCover.src;
+			book.title = updatedTitle.textContent;
+			book.vol = updatedVol.textContent.replace("Vol: ", "");
+			book.author = updatedAuthor.textContent.replace("Author: ", "");
+			book.link = updatedLink.href ? updatedLink.href : "";
+			book.markAsRead = updatedReadCheckInput.checked;
+		} else {
+			const bookCurrentLocation = myLibrary.findIndex(
+				(book) => book.id === item.dataset.id,
+			);
+			myLibrary.splice(bookCurrentLocation, 1);
+			item.remove();
+		}
 	});
+
+	console.log(myLibrary);
 
 	const isEmptyLibrary = myLibrary.length === 0;
 
@@ -955,18 +1016,17 @@ function editBook(event) {
 
 	currentCover.classList.add("__img-cover", "img-size");
 
-	saveBtn.removeEventListener("click", addBook);
-
 	bodyOverflowHide();
 
 	currentBookItems.forEach((item, index) => {
 		if (item.dataset.id === event.currentTarget.dataset.id) {
 			const book = myLibrary[index];
-			const newCover = item.querySelector(".__cover");
-			const newTitle = item.querySelector(".__title");
-			const newVol = item.querySelector(".__vol");
-			const newAuthor = item.querySelector(".__author");
-			const newLink = item.querySelector(".__link");
+			const updatedCover = item.querySelector(".__cover");
+			const updatedTitle = item.querySelector(".__title");
+			const updatedVol = item.querySelector(".__vol");
+			const updatedAuthor = item.querySelector(".__author");
+			const updatedLink = item.querySelector(".__link");
+			const updatedReadCheckInput = item.querySelector(".__read-check");
 
 			// ##COVER
 			currentCover.src = book.cover;
@@ -974,36 +1034,66 @@ function editBook(event) {
 			currentPreview.firstElementChild.replaceWith(currentCover);
 
 			// ##TITLE
-			currentTitle.value = book.title;
+			currentTitle.value = updatedTitle.textContent;
 
 			// ##VOL
-			currentVol.value = book.vol;
+			currentVol.value = updatedVol.textContent.replace("Vol: ", "");
 
 			// ##AUTHOR
-			currentAuthor.value = book.author;
+			currentAuthor.value = updatedAuthor.textContent.replace("Author: ", "");
 
 			// ##LINK
-			currentLink.value = book.link;
+			currentLink.value = updatedLink.href ? updatedLink.href : "";
 
 			// ##READ CHECKBOX
-			currentReadCheckInput.checked = book.markAsRead;
+			currentReadCheckInput.checked = updatedReadCheckInput.checked;
 
-			saveBtn.addEventListener(
-				"click",
-				(event) => {
-					event.preventDefault();
+			saveBtn.addEventListener("click", (event) => {
+				event.preventDefault();
 
-					const filesCoverImg = coverInput.files;
+				const filesCoverImg = coverInput.files;
 
-					// ##NEW COVER
-					for (const file of filesCoverImg) {
-						readFileImg(newCover, file);
+				// ##UPDATED COVER
+				for (const file of filesCoverImg) {
+					readFileImg(updatedCover, file);
+				}
+
+				// ##UPDATED TITLE
+				updatedTitle.textContent = currentTitle.value;
+
+				// ##UPDATED VOL
+				updatedVol.textContent = `Vol: ${currentVol.value}`;
+
+				// ##UPDATED AUTHOR
+				updatedAuthor.textContent = `Author: ${currentAuthor.value}`;
+
+				// ##UPDATED LINK
+				if (!currentLink.value) {
+					updatedLink.removeAttribute("href");
+					updatedLink.textContent = "none";
+				} else {
+					if (updatedLink.textContent !== "Visit me.") {
+						updatedLink.textContent = "Visit me.";
 					}
+					updatedLink.href= currentLink.value;
+				}
 
-					event.currentTarget.addEventListener("click", addBook);
-				},
-				{once: true},
-			);
+				// ##UPDATED READ CHECKBOX
+				updatedReadCheckInput.checked = currentReadCheckInput.checked;
+
+				if (confirmBtn.disabled) {
+					confirmBtn.disabled = false;
+				}
+
+				if (document.body.classList.contains("overflow-hidden")) {
+					document.body.classList.remove("overflow-hidden");
+				}
+
+				createPreviewText(preview);
+
+				form.reset();
+				addBookModal.close();
+			}, {once: true, signal: controller.signal});
 		}
 	});
 }

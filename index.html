@@ -17,7 +17,11 @@
 	<meta property="og:image:height" content="600">
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="book.url">
-	<!-- <link rel="preload" href="assets/img/other/boy-flying.png" as="image"> -->
+	<link rel="preload" href="assets/img/other/boy-flying.png" as="image">
+	<link rel="preload" href="assets/img/icon/star-check-black.svg" as="image">
+	<link rel="preload" href="assets/img/icon/star-plus-black.svg" as="image">
+	<link rel="preload" href="assets/img/icon/star-check-black.svg" as="image">
+	<link rel="preload" href="assets/img/icon/star-plus-white.svg" as="image">
 	<link rel="stylesheet" href="assets/css/styles.css">
 	<script src="assets/js/script.js" defer></script>
 	<title>My Library</title>
@@ -153,14 +157,14 @@
 				id="title"
 				name="title"
 				type="text"
-				aria-describedby="required"
+				aria-describedby="required-title"
 				inputmode="text"
 				maxlength="500"
 				placeholder="Toilet-bound Hanako-Kun"
 				autofocus
 				required
 			>
-			<p class="__required" id="required">The book's title is required</p>
+			<p class="__required hidden" id="required-title">The book's title is required</p>
 			<label class="__text" for="vol">Vol:</label>
 			<input
 				class="__input __vol"
@@ -187,9 +191,13 @@
 				id="link"
 				name="link"
 				type="url"
+				aria-describedby="required-correct-link"
 				inputmode="url"
 				placeholder="https://example-book.com"
 			>
+			<p class="__incorrect-link hidden" id="required-correct-link">
+				Please add the correct link e.g., https://www.google.com
+			</p>
 			<div class="__mark">
 				<input class="__read-check" id="read-00" type="checkbox">
 				<label class="__text __mark" for="read-00">Mark as read.</label>

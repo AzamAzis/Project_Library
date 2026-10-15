@@ -270,7 +270,7 @@ checkboxItems.forEach((item) => {
 });
 
 // ||UP
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
 	upBtn.addEventListener("click", goUp);
 });
 

@@ -1113,7 +1113,7 @@ function goUp() {
 	upBtn.classList.add("go-up");
 
 	setTimeout(() => {
-		scroll({
+		window.scrollTo({
 			top: 0,
 			behavior: "smooth",
 		});

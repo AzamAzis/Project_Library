@@ -232,7 +232,7 @@ linkInput.addEventListener("input", checkValidLink);
 
 // ||ADD BOOK
 addBookBtn.addEventListener("click", () => {
-	saveBtn.addEventListener("click", addBook, {once: true});
+	saveBtn.addEventListener("click", addBook);
 });
 
 // ||REMOVE BOOK
@@ -440,20 +440,20 @@ function addBook(event) {
 	const randomId = crypto.randomUUID();
 
 	const isCoverExist = cover.getAttribute("src");
-	const isTitleExist = titleInput.value;
-	const isLinkExist = linkInput.value;
+	const isTitleExist = Boolean(titleInput.value);
+	const isLinkExist = Boolean(linkInput.value);
 	const isLinkValid = linkInput.checkValidity();
 
 	const prevMessage = "Book has been added to your library.";
 
 	if (!isTitleExist) {
 		showInvalidMessage(invalidMessage);
+
 		if (!isLinkValid) {
 			showInvalidMessage(invalidLink);
 		}
+
 		return;
-	} else {
-		addBookModal.close();
 	}
 
 	if (!isLinkValid) {
@@ -603,6 +603,8 @@ function addBook(event) {
 
 	createPreviewText(preview);
 	form.reset();
+	saveBtn.removeEventListener("click", addBook);
+	addBookModal.close();
 }
 
 function alert() {

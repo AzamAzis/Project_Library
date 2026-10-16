@@ -208,12 +208,7 @@ uncheckAllBtn.addEventListener("click", uncheckAll);
 
 // ||OPEN DIALOG
 addBookBtn.addEventListener("click", bodyOverflowHide);
-addBookBtn.addEventListener("click", () => {
-	if (addedMessage.classList.contains("alert")) {
-		addedMessage.classList.remove("alert");
-		addedMessage.classList.add("hidden");
-	}
-});
+addBookBtn.addEventListener("click", endAlertImmediately);
 
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
@@ -625,8 +620,18 @@ function alert() {
 }
 
 function stopAlert() {
-	addedMessage.classList.remove("alert");
-	addedMessage.addEventListener("animationend", hideMessage);
+	if (addedMessage.classList.contains("alert")) {
+		addedMessage.classList.remove("alert");
+		addedMessage.addEventListener("animationend", hideMessage);
+	}
+
+}
+
+function endAlertImmediately() {
+	if (addedMessage.classList.contains("alert")) {
+		addedMessage.classList.remove("alert");
+		addedMessage.classList.add("hidden");
+	}
 }
 
 function showInvalidMessage(message) {
@@ -794,6 +799,8 @@ function update() {
 	uncheckAllBtn.classList.remove("hidden");
 	confirmBtn.classList.remove("hidden");
 	cancelBtn.classList.remove("hidden");
+
+	stopAlert();
 }
 
 function checkAll() {

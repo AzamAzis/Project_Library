@@ -160,9 +160,8 @@
 	position: fixed;
 	inset-block-end: 0;
 	inset-inline-end: 2%;
-	z-index: 9;
 	background-color: transparent;
-	height: 15rem;
+	height: 12rem;
 	padding: 0;
 	width: fit-content;
 	transform: translateY(0);

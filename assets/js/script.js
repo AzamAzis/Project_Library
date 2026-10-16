@@ -1069,7 +1069,9 @@ function editBook(event) {
 
 	currentCover.classList.add("__img-cover", "img-size");
 
-	bodyOverflowHide();
+	setTimeout(() => {
+		bodyOverflowHide();
+	});
 
 	currentBookItems.forEach((item, index) => {
 		if (item.dataset.id === event.currentTarget.dataset.id) {

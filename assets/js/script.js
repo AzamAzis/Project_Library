@@ -1179,9 +1179,12 @@ function hideBoy() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
 	const secondBookLocationY = currentBookItems[1].getBoundingClientRect().y;
+
 	upBtn.classList.remove("go-up");
 	upIcon.src = "assets/img/other/boy-normal.png";
 	upIcon.alt = "a boy is standing";
+
+	console.log(window.scrollY > secondBookLocationY);
 
 	if (window.scrollY > secondBookLocationY) {
 		upBtn.classList.remove("hidden");

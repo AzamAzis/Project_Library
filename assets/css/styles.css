@@ -160,6 +160,7 @@
 	position: fixed;
 	inset-block-end: 0;
 	inset-inline-end: 2%;
+	z-index: 9;
 	background-color: transparent;
 	height: 15rem;
 	padding: 0;

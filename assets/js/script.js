@@ -1184,8 +1184,6 @@ function hideBoy() {
 	upIcon.src = "assets/img/other/boy-normal.png";
 	upIcon.alt = "a boy is standing";
 
-	console.log(window.scrollY > secondBookLocationY);
-
 	if (window.scrollY > secondBookLocationY) {
 		upBtn.classList.remove("hidden");
 	} else {

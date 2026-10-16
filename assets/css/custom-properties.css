@@ -44,8 +44,8 @@
 	--space-xxl: 2.25em;
 
 	/* **Shadow */
-	--shadow-header: 0 0.25em 0.25em rgb(0 0 0 / 0.15);
-	--shadow-book: 0.31em 0.31em 0.25em 0.06em rgba(0, 0, 0, 0.2);
+	--shadow-header: 0 4px 4px rgb(0 0 0 / 0.15);
+	--shadow-book: 12px 12px 3px -4px rgba(0, 0, 0, 0.1);
 
 	/* **Border */
 	--br-sm: 0.2rem;

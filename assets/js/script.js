@@ -20,6 +20,7 @@ const linkInput = addBookModal.querySelector(".__link");
 const markAsReadInput = addBookModal.querySelector(".__read-check");
 const upBtn = document.querySelector(".up");
 const upIcon = upBtn.querySelector(".__icon");
+const addedMessage = document.querySelector(".added");
 
 const screen = window.matchMedia("(width < 680px)");
 
@@ -207,6 +208,12 @@ uncheckAllBtn.addEventListener("click", uncheckAll);
 
 // ||OPEN DIALOG
 addBookBtn.addEventListener("click", bodyOverflowHide);
+addBookBtn.addEventListener("click", () => {
+	if (addedMessage.classList.contains("alert")) {
+		addedMessage.classList.remove("alert");
+		addedMessage.classList.add("hidden");
+	}
+});
 
 // ||CLOSE DIALOG
 closeBtn.addEventListener("click", toClose);
@@ -437,7 +444,7 @@ function addBook(event) {
 	const isLinkExist = linkInput.value;
 	const isLinkValid = linkInput.checkValidity();
 
-
+	const prevMessage = "Book has been added to your library.";
 
 	if (!isTitleExist) {
 		showInvalidMessage(invalidMessage);
@@ -561,6 +568,12 @@ function addBook(event) {
 		newEditBtn,
 	);
 
+	if (addedMessage.textContent !== prevMessage) {
+		addedMessage.textContent = prevMessage;
+	}
+
+	alert();
+
 	if (myLibrary.length <= 6) {
 		bookContainer.appendChild(newBookCard);
 	}
@@ -590,6 +603,21 @@ function addBook(event) {
 
 	createPreviewText(preview);
 	form.reset();
+}
+
+function alert() {
+	addedMessage.classList.remove("hidden");
+
+	setTimeout(() => {
+		addedMessage.classList.add("alert");
+	});
+
+	setTimeout(stopAlert, 5000);
+}
+
+function stopAlert() {
+	addedMessage.classList.remove("alert");
+	addedMessage.addEventListener("animationend", hideMessage);
 }
 
 function showInvalidMessage(message) {
@@ -642,12 +670,11 @@ function toClose() {
 	createPreviewText(preview);
 
 	if (invalidMessage.classList.contains("__message")) {
-		invalidMessage.style.display = "none";
-		invalidMessage.classList.remove("__message");
+		removeInvalidMessage(invalidMessage);
 	}
 
-	if (invalidMessage.classList.contains("__message")) {
-		invalidMessage.classList.remove("__message");
+	if (invalidLink.classList.contains("__message")) {
+		removeInvalidMessage(invalidLink);
 	}
 
 	if (document.body.classList.contains("overflow-hidden")) {
@@ -655,6 +682,11 @@ function toClose() {
 	}
 
 	form.reset();
+}
+
+function removeInvalidMessage(message) {
+	message.classList.add("hidden");
+	message.classList.remove("__message");
 }
 
 function checkValidTitle() {
@@ -962,6 +994,7 @@ function sumHeight(accumulator, currentValue) {
 function confirmUpdate() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
+	const newMessage = "Book has been saved";
 
 	currentBookItems.forEach((item, index) => {
 		const book = myLibrary[index];
@@ -989,8 +1022,6 @@ function confirmUpdate() {
 		}
 	});
 
-	console.log(myLibrary);
-
 	const isEmptyLibrary = myLibrary.length === 0;
 
 	if (isEmptyLibrary) {
@@ -999,6 +1030,12 @@ function confirmUpdate() {
 	}
 
 	confirmBtn.disabled = true;
+
+		if (addedMessage.textContent !== newMessage) {
+		addedMessage.textContent = newMessage;
+	}
+
+	alert();
 
 	finishUpdate();
 }
@@ -1099,7 +1136,7 @@ function editBook(event) {
 }
 
 function bodyOverflowHide() {
-	scroll({
+	window.scrollTo({
 		top: 0,
 		behavior: "smooth",
 	});

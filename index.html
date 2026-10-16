@@ -28,7 +28,9 @@
 </head>
 <body>
 	<header class="header">
-		<div class="added hidden" id="added">Book has been added to your library.</div>
+		<div class="added hidden" id="added">
+			<p>Book has been added to your library.</p>
+		</div>
 		<h1 class="__title">My Library</h1>
 	</header>
 
@@ -143,7 +145,7 @@
 		</svg>
 	</button>
 
-		<form class="__form" action="#" method="dialog">
+		<form class="__form" action="#" method="dialog" novalidate>
 			<h3 class="__form-title">Add My Book</h3>
 			<label class="__text" for="cover">Cover:</label>
 			<input class="__cover __input-img hidden" id="cover" name="cover" type="file" accept="image/*">
@@ -202,7 +204,7 @@
 				<input class="__read-check" id="read-00" type="checkbox">
 				<label class="__text __mark" for="read-00">Mark as read.</label>
 			</div>
-			<button class="btn __save" type="submit" value="save" aria-describedby="added">Save</button>
+			<button class="btn __save" type="submit" value="save">Save</button>
 		</form>
 	</dialog>
 </body>

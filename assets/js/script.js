@@ -1172,7 +1172,7 @@ function goUp() {
 		});
 	}, 250);
 
-	upBtn.addEventListener("animationend", hideBoy);
+		upBtn.addEventListener("animationend", hideBoy);
 }
 
 function hideBoy() {

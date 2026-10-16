@@ -332,15 +332,17 @@ function showMore() {
 	currentDisplay++;
 	nextDisplay++;
 	const nextBook = getNextBook(currentDisplay);
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
 
 	if (
-		!(nextDisplay > myLibrary.length) &&
+		!(nextDisplay > currentBookItems.length) &&
 		nextBook.classList.contains("invincible-book")
 	) {
 		nextBook.classList.remove("invincible-book");
 	}
 
-	if (nextDisplay <= myLibrary.length) {
+	if (nextDisplay <= currentBookItems.length) {
 		const height = getBookHeight(nextBook) + bookContainerGap;
 		initialBookContainerHeight += height;
 		setHeight(bookContainer, initialBookContainerHeight);
@@ -351,10 +353,9 @@ function showMore() {
 		isRemoved = true;
 	}
 
-	if (nextDisplay === myLibrary.length) {
+	if (nextDisplay === currentBookItems.length) {
 		showMoreBtn.textContent = "Show Less";
-		return;
-	} else if (nextDisplay > myLibrary.length) {
+	} else if (nextDisplay > currentBookItems.length) {
 		showMoreBtn.textContent = "Show More";
 		currentDisplay = 0;
 		nextDisplay = 1;
@@ -590,8 +591,14 @@ function addBook(event) {
 		updateBtn.disabled = false;
 	}
 
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+
+	console.log(nextDisplay, currentBookItems.length, myLibrary.length);
+
 	if (
-		nextDisplay <= myLibrary.length &&
+		nextDisplay < currentBookItems.length &&
+		(currentBookItems.length === myLibrary.length) &&
 		showMoreBtn.textContent === "Show Less"
 	) {
 		showMoreBtn.textContent = "Show More";

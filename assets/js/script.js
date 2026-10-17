@@ -21,6 +21,9 @@ const markAsReadInput = addBookModal.querySelector(".__read-check");
 const upBtn = document.querySelector(".up");
 const upIcon = upBtn.querySelector(".__icon");
 const addedMessage = document.querySelector(".added");
+const searchInput = document.querySelector(".__search");
+const searchBtn = document.querySelector(".__search-btn");
+const clearBtn = document.querySelector(".__clear");
 
 const screen = window.matchMedia("(width < 680px)");
 
@@ -64,11 +67,14 @@ const bookThree = {
 	id: `book-${crypto.randomUUID()}`,
 };
 
-const myLibrary = [bookOne, bookTwo, bookThree];
+const localLibrary = JSON.parse(localStorage.getItem("localLibrary"));
+
+const myLibrary = localLibrary ? localLibrary : [bookOne, bookTwo, bookThree];
 
 let currentDisplay = 0;
 let nextDisplay = 1;
 let isRemoved = true;
+
 
 // ||DISPLAY BOOKS
 for (const book of myLibrary) {
@@ -196,6 +202,21 @@ toResponsive();
 screen.addEventListener("change", toResponsive);
 
 showMoreBtn.addEventListener("click", showMore);
+
+// ||SEARCH
+searchInput.addEventListener("input", () => {
+	if (clearBtn.classList.contains("hidden")) {
+		removeSynchronously(clearBtn, "hidden", "__clear-visible");
+	}
+
+	if (!searchInput.value) {
+		removeSlowly(clearBtn, "__clear-visible", "hidden");
+	}
+});
+
+clearBtn.addEventListener("click", clearSearch);
+
+searchBtn.addEventListener("click", searchBook);
 
 // ||UPDATE
 updateBtn.addEventListener("click", update);
@@ -545,6 +566,10 @@ function addBook(event) {
 		newBookCard.dataset.id,
 	);
 
+	const localBooks = JSON.stringify(myLibrary);
+
+	localStorage.setItem("localLibrary", localBooks);
+
 	// !!ADD TO LINK CONTAINER
 	newLinkContainer.appendChild(newLink);
 
@@ -636,10 +661,14 @@ function endAlertImmediately() {
 
 function showInvalidMessage(message) {
 	addBookModal.showModal();
-	message.classList.remove("hidden");
+	removeSynchronously(message, "hidden", "__message");
+}
+
+function removeSynchronously(item, class1, class2) {
+	item.classList.remove(class1);
 	setTimeout(() => {
-		message.classList.add("__message");
-	}, 0);
+		item.classList.add(class2);
+	});
 }
 
 function createNewDetail(item, value, classDetail, ...utilities) {
@@ -1038,6 +1067,10 @@ function confirmUpdate() {
 		}
 	});
 
+	const localBooks = JSON.stringify(myLibrary);
+
+	localStorage.setItem("localLibrary", localBooks);
+
 	const isEmptyLibrary = myLibrary.length === 0;
 
 	if (isEmptyLibrary) {
@@ -1191,4 +1224,37 @@ function hideBoy() {
 	} else {
 		upBtn.classList.add("hidden");
 	}
+}
+
+function clearSearch(item) {
+	if (searchInput.value) {
+		searchInput.value = "";
+	}
+
+	removeSlowly(item.currentTarget, "__clear-visible", "hidden");
+}
+
+function removeSlowly(item, class1, class2) {
+	item.classList.remove(class1);
+	item.addEventListener("transitionend", (event) => {
+		event.currentTarget.classList.add(class2);
+	});
+}
+
+function searchBook(btn) {
+	btn.preventDefault();
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks];
+
+	const keyword = searchInput.value.toLowerCase();
+
+	addBookBtn.classList.add("hidden");
+
+	currentBookItems.forEach((book, index) => {
+		const bookTitle = myLibrary[index].title.toLowerCase();
+
+		if (bookTitle.includes(keyword)) {
+			console.log(book);
+		}
+	});
 }

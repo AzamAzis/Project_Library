@@ -98,6 +98,10 @@
 		outline: 1px dashed light-dark(var(--bg-black), var(--bg-white));
 	}
 
+	& .__clear-visible {
+		opacity: 1;
+	}
+
 	& .__search-btn {
 		height: 1.75rem;
 		width: 1.75rem;

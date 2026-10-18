@@ -77,7 +77,7 @@ let isRemoved = true;
 
 
 // ||DISPLAY BOOKS
-for (const book of myLibrary) {
+for (let i = 0; i < 6; i++) {
 	const newBookCard = document.createElement("li");
 	const newCheckbox = document.createElement("input");
 	const newCover = document.createElement("img");
@@ -92,22 +92,13 @@ for (const book of myLibrary) {
 	const newMarkLabel = document.createElement("label");
 	const newEditBtn = document.createElement("button");
 
-	// ##BOOK
-	newBookCard.classList.add("book");
-	newBookCard.dataset.id = book.id;
+	const book = myLibrary[i];
 
-	// ##CHECKBOX
-	newCheckbox.classList.add("__checkbox", "hidden");
-	newCheckbox.name = "book";
-	newCheckbox.type = "checkbox";
-	newCheckbox.ariaDescription = "Click to select the book.";
-	newCheckbox.dataset.id = newBookCard.dataset.id;
+	if (!book) break;
 
-	// ##COVER
-	newCover.classList.add("__cover", "img-size");
-	newCover.src = book.cover;
-	newCover.alt = `${book.title} cover`;
-	newCover.loading = "lazy";
+	createBookCard(newBookCard, book.id);
+	createBookCheckbox(newCheckbox, book.title, newBookCard.dataset.id);
+	createBookCover(newCover, book.cover, book.title);
 
 	// ##TITLE
 	newTitle.classList.add("__title", "overflow-hidden");
@@ -181,9 +172,7 @@ for (const book of myLibrary) {
 		newEditBtn,
 	);
 
-	if (myLibrary.length <= 6) {
-		bookContainer.appendChild(newBookCard);
-	}
+	bookContainer.appendChild(newBookCard);
 }
 
 const checkboxes = bookContainer.querySelectorAll(".__checkbox");
@@ -454,7 +443,7 @@ function addBook(event) {
 	const newEditBtn = document.createElement("button");
 	const newReadCheckInput = document.createElement("input");
 	const newMarkLabel = document.createElement("label");
-	const randomId = crypto.randomUUID();
+	const randomId = `book-${crypto.randomUUID()}`;
 
 	const isCoverExist = cover.getAttribute("src");
 	const isTitleExist = Boolean(titleInput.value);
@@ -482,27 +471,17 @@ function addBook(event) {
 		updateBtn.disabled = false;
 	}
 
-	//##BOOK
-	newBookCard.classList.add("book");
-	newBookCard.dataset.id = `book-${randomId}`;
-
-	// ##CHECKBOX
-	newCheckbox.classList.add("__checkbox", "hidden");
-	newCheckbox.name = "book";
-	newCheckbox.type = "checkbox";
-	newCheckbox.ariaDescription = "Click to select the book.";
-	newCheckbox.dataset.id = newBookCard.dataset.id;
-	newCheckbox.addEventListener("change", toCheck);
+	createBookCard(newBookCard, randomId);
+	createBookCheckbox(newCheckbox, titleInput.value, newBookCard.dataset.id);
 
 	// ##COVER
 	newCover.classList.add("__cover", "img-size");
 	if (!isCoverExist) {
-		newCover.src = "assets/img/book-cover/placeholder-cover.jpg";
-		newCover.alt = "placeholder cover: Hanako-Kun Peace Sign";
+		const placeholderImg = "assets/img/book-cover/placeholder-cover.jpg";
+		const placeholderAlt = "Hanako-Kun Peace Sign";
+		createBookCover(newCover, placeholderImg, placeholderAlt);
 	} else {
-		newCover.src = cover.src;
-		newCover.alt = cover.alt;
-		newCover.loading = "lazy";
+		createBookCover(newCover, cover.src, cover.alt);
 	}
 
 	// ##DETAIL
@@ -613,8 +592,6 @@ function addBook(event) {
 
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
-
-	console.log(nextDisplay, currentBookItems.length, myLibrary.length);
 
 	if (
 		nextDisplay < currentBookItems.length &&
@@ -1247,14 +1224,65 @@ function searchBook(btn) {
 	const currentBookItems = [...currentBooks];
 
 	const keyword = searchInput.value.toLowerCase();
+	const bookIndex =
+		myLibrary.findIndex((book) => book.title.toLowerCase().includes(keyword));
+	const bookInLibrary = myLibrary[bookIndex];
 
 	addBookBtn.classList.add("hidden");
 
 	currentBookItems.forEach((book, index) => {
 		const bookTitle = myLibrary[index].title.toLowerCase();
 
-		if (bookTitle.includes(keyword)) {
-			console.log(book);
+		console.log(bookInLibrary);
+
+		if (!bookTitle.includes(keyword)) {
+			book.classList.add("hidden");
+		}
+
+		const notDisplayed =
+			currentBookItems.every((book) => book.classList.contains("hidden"));
+
+		if (notDisplayed && bookInLibrary) {
+			
 		}
 	});
+}
+
+function createBook(book) {
+	const bookCard = document.createElement("li");
+	const bookCheckbox = document.createElement("input");
+	const bookCover = document.createElement("img");
+	const bookTitle = document.createElement("h2");
+	const bookDetail = document.createElement("ul");
+	const bookVol = document.createElement("li");
+	const bookAuthor = document.createElement("li");
+	const bookLink = document.createElement("li");
+	const bookReadcheckbox = document.createElement("input");
+	const bookReadLabel = document.createElement("label");
+	const bookEditBtn = document.createElement("button");
+
+	createBookCard(bookCard, book.id);
+	createBookCheckbox(bookCheckbox, book.title, book.id);
+	createBookCover(bookCover, book.cover, book.title);
+}
+
+function createBookCard(card, id) {
+	card.classList.add("book")
+	card.dataset.id = id;
+}
+
+function createBookCheckbox(checkbox, title, id) {
+	checkbox.classList.add("__checkbox", "hidden");
+	checkbox.name = title;
+	checkbox.type = "checkbox";
+	checkbox.ariaDescription = "Click to select the book.";
+	checkbox.dataset.id = id;
+	checkbox.addEventListener("change", toCheck);
+}
+
+function createBookCover(cover, img, alt) {
+	cover.classList.add("__cover", "img-size");
+	cover.src = img;
+	cover.alt = `${alt}'s cover`;
+	cover.loading = "lazy";
 }

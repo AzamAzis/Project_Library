@@ -14,7 +14,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	background-color: light-dark(var(--bg-white), var(--bg-black));
-	min-height: 100svh;
+	min-height: 100dvh;
 	font: var(--text-md) / 1.5 "Funnel Display", sans-serif;
 	color: light-dark(var(--text-black), var(--text-white));
 }

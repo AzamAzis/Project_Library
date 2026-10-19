@@ -75,7 +75,6 @@ let currentDisplay = 0;
 let nextDisplay = 1;
 let isRemoved = true;
 
-
 // ||DISPLAY BOOKS
 for (let i = 0; i < 6; i++) {
 	const newBookCard = document.createElement("li");
@@ -99,50 +98,12 @@ for (let i = 0; i < 6; i++) {
 	createBookCard(newBookCard, book.id);
 	createBookCheckbox(newCheckbox, book.title, newBookCard.dataset.id);
 	createBookCover(newCover, book.cover, book.title);
-
-	// ##TITLE
-	newTitle.classList.add("__title", "overflow-hidden");
-	newTitle.textContent = book.title;
-
-	// ##DETAIL
+	createBookTitle(newTitle, book.title);
 	newDetail.classList.add("__detail");
-
-	// ##VOL
-	newVol.classList.add("__vol", "overflow-hidden");
-	newVol.textContent = `Vol: ${book.vol}`;
-
-	// ##AUTHOR
-	newAuthor.classList.add("__author", "overflow-hidden");
-	newAuthor.textContent = `Author: ${book.author}`;
-
-	// ##LINK CONTAINER
-	newLinkContainer.classList.add("link-container");
-	newLinkContainer.textContent = "Link: ";
-
-	// ##LINK
-	newLink.classList.add("__link");
-	if (book.link) {
-		newLink.href = book.link;
-		newLink.rel = "noopener noreferrer";
-		newLink.target = "_blank";
-		newLink.textContent = "Visit me.";
-	} else {
-		newLink.textContent = "none";
-	}
-
-	// ##MARK
-	newMark.classList.add("__mark");
-
-	// ##MARK INPUT
-	newReadCheckInput.classList.add("__read-check");
-	newReadCheckInput.id = newBookCard.dataset.id;
-	newReadCheckInput.type = "checkbox";
-	newReadCheckInput.checked = book.markAsRead;
-
-	// ##MARK LABEL
-	newMarkLabel.classList.add("__text");
-	newMarkLabel.setAttribute("for", newReadCheckInput.id);
-	newMarkLabel.textContent = "Mark As Read.";
+	createBookVol(newVol, book.vol);
+	createBookAuthor(newAuthor, book.author);
+	createBookLink(newLinkContainer, newLink, book.link);
+	createMarkAsRead(newMark, newReadCheckInput, newMarkLabel, newReadCheckInput.id);
 
 	// ##EDIT BTN
 	newEditBtn.classList.add("btn", "__edit", "hidden");
@@ -152,12 +113,6 @@ for (let i = 0; i < 6; i++) {
 	newEditBtn.dataset.id = newBookCard.dataset.id;
 	newEditBtn.textContent = "Edit";
 	newEditBtn.addEventListener("click", editBook);
-
-	// !!ADD TO MARK
-	newMark.append(newReadCheckInput, newMarkLabel);
-
-	// !!ADD TO LINK CONTAINER
-	newLinkContainer.append(newLink);
 
 	// !!ADD TO DETAIL
 	newDetail.append(newVol, newAuthor, newLinkContainer);
@@ -447,7 +402,6 @@ function addBook(event) {
 
 	const isCoverExist = cover.getAttribute("src");
 	const isTitleExist = Boolean(titleInput.value);
-	const isLinkExist = Boolean(linkInput.value);
 	const isLinkValid = linkInput.checkValidity();
 
 	const prevMessage = "Book has been added to your library.";
@@ -474,8 +428,6 @@ function addBook(event) {
 	createBookCard(newBookCard, randomId);
 	createBookCheckbox(newCheckbox, titleInput.value, newBookCard.dataset.id);
 
-	// ##COVER
-	newCover.classList.add("__cover", "img-size");
 	if (!isCoverExist) {
 		const placeholderImg = "assets/img/book-cover/placeholder-cover.jpg";
 		const placeholderAlt = "Hanako-Kun Peace Sign";
@@ -484,11 +436,11 @@ function addBook(event) {
 		createBookCover(newCover, cover.src, cover.alt);
 	}
 
-	// ##DETAIL
-	newDetail.classList.add("__detail");
-
 	// ##TITLE
 	createNewDetail(newTitle, titleInput, "__title", "overflow-hidden");
+
+	// ##DETAIL
+	newDetail.classList.add("__detail");
 
 	// ##VOL
 	createNewDetail(newVol, volInput, "__vol", "overflow-hidden");
@@ -496,35 +448,11 @@ function addBook(event) {
 	// ##AUTHOR
 	createNewDetail(newAuthor, authorInput, "__author", "overflow-hidden");
 
-	// ##LINK CONTAINER
-	newLinkContainer.classList.add("link-container");
-	newLinkContainer.textContent = "Link: ";
-
 	// ##LINK
-	newLink.classList.add("__link");
-
-	if (!isLinkExist) {
-		newLink.textContent = "none";
-	} else {
-		newLink.textContent = "Visit me.";
-		newLink.href = linkInput.value;
-		newLink.rel = "noopener noreferrer";
-		newLink.target = "_blank";
-	}
+	createBookLink(newLinkContainer, newLink, linkInput.value);
 
 	// ##MARK
-	newMark.classList.add("__mark");
-
-	// ##MARK INPUT
-	newReadCheckInput.classList.add("__read-check");
-	newReadCheckInput.id = newBookCard.dataset.id;
-	newReadCheckInput.type = "checkbox";
-	newReadCheckInput.checked = markAsReadInput.checked;
-
-	// ##MARK LABEL
-	newMarkLabel.classList.add("__text", "__mark");
-	newMarkLabel.setAttribute("for", newReadCheckInput.id);
-	newMarkLabel.textContent = "Mark as read.";
+	createMarkAsRead(newMark, newReadCheckInput, newMarkLabel, newReadCheckInput.id);
 
 	// ##EDIT BTN
 	newEditBtn.classList.add("btn", "__edit", "hidden");
@@ -547,13 +475,7 @@ function addBook(event) {
 
 	const localBooks = JSON.stringify(myLibrary);
 
-	localStorage.setItem("localLibrary", localBooks);
-
-	// !!ADD TO LINK CONTAINER
-	newLinkContainer.appendChild(newLink);
-
-	// !!ADD TO MARK
-	newMark.append(newReadCheckInput, newMarkLabel);
+	// localStorage.setItem("localLibrary", localBooks);
 
 	// !!ADD TO DETAIL
 	newDetail.append(newTitle, newVol, newAuthor, newLinkContainer);
@@ -654,11 +576,7 @@ function createNewDetail(item, value, classDetail, ...utilities) {
 
 	const text = value.value ? value.value : "none";
 
-	if (detail.toLowerCase() === "title") {
-		item.textContent = text;
-	} else {
 		item.textContent = `${detail}: ${text}`;
-	}
 
 	for (const utility of utilities) {
 		item.classList.add(classDetail, utility);
@@ -1018,35 +936,36 @@ function confirmUpdate() {
 	const currentBookItems = [...currentBooks];
 	const newMessage = "Book has been saved";
 
-	currentBookItems.forEach((item, index) => {
+	for (let index = currentBookItems.length - 1; index >= 0; index--) {
 		const book = myLibrary[index];
-		const updatedCover = item.querySelector(".__cover");
-		const updatedTitle = item.querySelector(".__title");
-		const updatedVol = item.querySelector(".__vol");
-		const updatedAuthor = item.querySelector(".__author");
-		const updatedLink = item.querySelector(".__link");
-		const updatedReadCheckInput = item.querySelector(".__read-check");
-		const isTemporalRemoved = item.classList.contains("hidden");
+		const updatedCover = currentBookItems[index].querySelector(".__cover");
+		const updatedTitle = currentBookItems[index].querySelector(".__title");
+		const updatedVol = currentBookItems[index].querySelector(".__vol");
+		const updatedAuthor = currentBookItems[index].querySelector(".__author");
+		const updatedLink = currentBookItems[index].querySelector(".__link");
+		const updatedReadCheckInput = currentBookItems[index].querySelector(".__read-check");
+		const isTemporalRemoved = currentBookItems[index].classList.contains("hidden");
 
-		if (!isTemporalRemoved) {
+		if (isTemporalRemoved) {
+			const bookCurrentLocation =
+				myLibrary.findIndex((book) => book.id === currentBookItems[index].dataset.id);
+
+			myLibrary.splice(bookCurrentLocation, 1);
+			currentBookItems.splice(bookCurrentLocation, 1);
+			currentBooks[index].remove();
+		} else {
 			book.cover = updatedCover.src;
 			book.title = updatedTitle.textContent;
 			book.vol = updatedVol.textContent.replace("Vol: ", "");
 			book.author = updatedAuthor.textContent.replace("Author: ", "");
 			book.link = updatedLink.href ? updatedLink.href : "";
 			book.markAsRead = updatedReadCheckInput.checked;
-		} else {
-			const bookCurrentLocation = myLibrary.findIndex(
-				(book) => book.id === item.dataset.id,
-			);
-			myLibrary.splice(bookCurrentLocation, 1);
-			item.remove();
 		}
-	});
+	};
 
 	const localBooks = JSON.stringify(myLibrary);
 
-	localStorage.setItem("localLibrary", localBooks);
+	// localStorage.setItem("localLibrary", localBooks);
 
 	const isEmptyLibrary = myLibrary.length === 0;
 
@@ -1233,14 +1152,12 @@ function searchBook(btn) {
 	currentBookItems.forEach((book, index) => {
 		const bookTitle = myLibrary[index].title.toLowerCase();
 
-		console.log(bookInLibrary);
-
 		if (!bookTitle.includes(keyword)) {
-			book.classList.add("hidden");
+			book.classList.add("invincible-book");
 		}
 
 		const notDisplayed =
-			currentBookItems.every((book) => book.classList.contains("hidden"));
+			currentBookItems.every((book) => book.classList.contains("invincible-book"));
 
 		if (notDisplayed && bookInLibrary) {
 			
@@ -1256,33 +1173,89 @@ function createBook(book) {
 	const bookDetail = document.createElement("ul");
 	const bookVol = document.createElement("li");
 	const bookAuthor = document.createElement("li");
+	const bookLinkContainer = document.createElement("ul");
 	const bookLink = document.createElement("li");
-	const bookReadcheckbox = document.createElement("input");
+	const markContainer = document.createElement("div");
+	const bookReadCheckbox = document.createElement("input");
 	const bookReadLabel = document.createElement("label");
 	const bookEditBtn = document.createElement("button");
 
 	createBookCard(bookCard, book.id);
 	createBookCheckbox(bookCheckbox, book.title, book.id);
 	createBookCover(bookCover, book.cover, book.title);
+	createBookTitle(bookTitle, book.title);
+	bookDetail.classList.add("__detail");
+	createBookVol(bookVol, book.vol);
+	createBookAuthor(bookAuthor, book.author);
+	createBookLink(bookLinkContainer, bookLink, book.link);
+	createMarkAsRead(markContainer, bookReadCheckbox, bookReadLabel);
 }
 
-function createBookCard(card, id) {
-	card.classList.add("book")
-	card.dataset.id = id;
+function createBookCard(elem, id) {
+	elem.classList.add("book")
+	elem.dataset.id = id;
 }
 
-function createBookCheckbox(checkbox, title, id) {
-	checkbox.classList.add("__checkbox", "hidden");
-	checkbox.name = title;
-	checkbox.type = "checkbox";
-	checkbox.ariaDescription = "Click to select the book.";
-	checkbox.dataset.id = id;
-	checkbox.addEventListener("change", toCheck);
+function createBookCheckbox(elem, title, id) {
+	elem.classList.add("__checkbox", "hidden");
+	elem.name = title;
+	elem.type = "checkbox";
+	elem.ariaDescription = "Click to select the book.";
+	elem.dataset.id = id;
+	elem.addEventListener("change", toCheck);
 }
 
-function createBookCover(cover, img, alt) {
-	cover.classList.add("__cover", "img-size");
-	cover.src = img;
-	cover.alt = `${alt}'s cover`;
-	cover.loading = "lazy";
+function createBookCover(elem, img, alt) {
+	elem.classList.add("__cover", "img-size");
+	elem.src = img;
+	elem.alt = `${alt}'s cover`;
+	elem.loading = "lazy";
 }
+
+function createBookTitle(elem, title) {
+	elem.classList.add("__title", "overflow-hidden");
+	elem.textContent = title;
+}
+
+function createBookVol(elem, vol) {
+	elem.classList.add("__vol", "overflow-hidden");
+	elem.textContent = `Vol: ${vol}`;
+}
+
+function createBookAuthor(elem, author) {
+	elem.classList.add("__author", "overflow-hidden");
+	elem.textContent = `Author: ${author}`;
+}
+
+function createBookLink(container, elem, link) {
+	container.classList.add("link-container");
+	elem.classList.add("__link");
+	if (link) {
+		elem.href = link;
+		elem.textContent = "Visit me.";
+	} else {
+		elem.textContent = "none";
+		if (elem.getAttribute("href")) {
+			elem.removeAttribute("href");
+		}
+	}
+
+	elem.rel = "noopener noreferrer";
+	elem.target = "_blank";
+
+	container.textContent = "Link: ";
+	container.appendChild(elem);
+}
+
+function createMarkAsRead(container, input, label, id) {
+	container.classList.add("__mark");
+	input.classList.add("__read-check");
+	input.id = id;
+	input.type = "checkbox";
+	label.classList.add("__text");
+	label.setAttribute("for", id);
+	label.textContent = "Mark as read.";
+	container.append(input, label);
+}
+
+function createEditBtn(elem) {}

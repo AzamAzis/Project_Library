@@ -25,9 +25,13 @@
 
 <script>
 
-	const hello = "hello1";
+	const hello = [1, 2, 3];
 
-	console.log(hello.match(/[0-9]/g));
+	hello.forEach((item, index, array) => {
+		array.splice(index, 1);
+	});
+
+	console.log(hello);
 
 </script>
 </body>

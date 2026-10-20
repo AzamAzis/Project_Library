@@ -77,57 +77,11 @@ let isRemoved = true;
 
 // ||DISPLAY BOOKS
 for (let i = 0; i < 6; i++) {
-	const newBookCard = document.createElement("li");
-	const newCheckbox = document.createElement("input");
-	const newCover = document.createElement("img");
-	const newTitle = document.createElement("h2");
-	const newDetail = document.createElement("ul");
-	const newVol = document.createElement("li");
-	const newAuthor = document.createElement("li");
-	const newLinkContainer = document.createElement("li");
-	const newLink = document.createElement("a");
-	const newMark = document.createElement("div");
-	const newReadCheckInput = document.createElement("input");
-	const newMarkLabel = document.createElement("label");
-	const newEditBtn = document.createElement("button");
-
 	const book = myLibrary[i];
 
 	if (!book) break;
 
-	createBookCard(newBookCard, book.id);
-	createBookCheckbox(newCheckbox, book.title, newBookCard.dataset.id);
-	createBookCover(newCover, book.cover, book.title);
-	createBookTitle(newTitle, book.title);
-	newDetail.classList.add("__detail");
-	createBookVol(newVol, book.vol);
-	createBookAuthor(newAuthor, book.author);
-	createBookLink(newLinkContainer, newLink, book.link);
-	createMarkAsRead(newMark, newReadCheckInput, newMarkLabel, newReadCheckInput.id);
-
-	// ##EDIT BTN
-	newEditBtn.classList.add("btn", "__edit", "hidden");
-	newEditBtn.type = "button";
-	newEditBtn.commandForElement = addBookModal;
-	newEditBtn.command = "show-modal";
-	newEditBtn.dataset.id = newBookCard.dataset.id;
-	newEditBtn.textContent = "Edit";
-	newEditBtn.addEventListener("click", editBook);
-
-	// !!ADD TO DETAIL
-	newDetail.append(newVol, newAuthor, newLinkContainer);
-
-	// !!ADD TO BOOK
-	newBookCard.append(
-		newCheckbox,
-		newCover,
-		newTitle,
-		newDetail,
-		newMark,
-		newEditBtn,
-	);
-
-	bookContainer.appendChild(newBookCard);
+	createBook(book);
 }
 
 const checkboxes = bookContainer.querySelectorAll(".__checkbox");
@@ -238,6 +192,7 @@ window.addEventListener("dragover", (event) => {
 	}
 });
 
+// ||BOOK CHECK
 checkboxItems.forEach((item) => {
 	item.addEventListener("change", toCheck);
 });
@@ -455,13 +410,7 @@ function addBook(event) {
 	createMarkAsRead(newMark, newReadCheckInput, newMarkLabel, newReadCheckInput.id);
 
 	// ##EDIT BTN
-	newEditBtn.classList.add("btn", "__edit", "hidden");
-	newEditBtn.type = "button";
-	newEditBtn.textContent = "Edit";
-	newEditBtn.commandForElement = addBookModal;
-	newEditBtn.command = "show-modal";
-	newEditBtn.dataset.id = newBookCard.dataset.id;
-	newEditBtn.addEventListener("click", editBook);
+	createEditBtn(newEditBtn, newBookCard.dataset.id);
 
 	addBookToLibrary(
 		newCover.src,
@@ -475,7 +424,7 @@ function addBook(event) {
 
 	const localBooks = JSON.stringify(myLibrary);
 
-	// localStorage.setItem("localLibrary", localBooks);
+	localStorage.setItem("localLibrary", localBooks);
 
 	// !!ADD TO DETAIL
 	newDetail.append(newTitle, newVol, newAuthor, newLinkContainer);
@@ -570,16 +519,11 @@ function removeSynchronously(item, class1, class2) {
 	});
 }
 
-function createNewDetail(item, value, classDetail, ...utilities) {
-	const rawClass = classDetail.replaceAll(/__/g, "");
-	const detail = rawClass.slice(0, 1).toLocaleUpperCase() + rawClass.slice(1);
-
-	const text = value.value ? value.value : "none";
-
-		item.textContent = `${detail}: ${text}`;
+function createNewDetail(item, value, __class, ...utilities) {
+	inputValue(item, __class, value.value);
 
 	for (const utility of utilities) {
-		item.classList.add(classDetail, utility);
+		item.classList.add(__class, utility);
 	}
 }
 
@@ -965,7 +909,7 @@ function confirmUpdate() {
 
 	const localBooks = JSON.stringify(myLibrary);
 
-	// localStorage.setItem("localLibrary", localBooks);
+	localStorage.setItem("localLibrary", localBooks);
 
 	const isEmptyLibrary = myLibrary.length === 0;
 
@@ -1160,7 +1104,7 @@ function searchBook(btn) {
 			currentBookItems.every((book) => book.classList.contains("invincible-book"));
 
 		if (notDisplayed && bookInLibrary) {
-			
+			createBook(bookInLibrary);
 		}
 	});
 }
@@ -1173,8 +1117,8 @@ function createBook(book) {
 	const bookDetail = document.createElement("ul");
 	const bookVol = document.createElement("li");
 	const bookAuthor = document.createElement("li");
-	const bookLinkContainer = document.createElement("ul");
-	const bookLink = document.createElement("li");
+	const bookLinkContainer = document.createElement("li");
+	const bookLink = document.createElement("a");
 	const markContainer = document.createElement("div");
 	const bookReadCheckbox = document.createElement("input");
 	const bookReadLabel = document.createElement("label");
@@ -1184,11 +1128,24 @@ function createBook(book) {
 	createBookCheckbox(bookCheckbox, book.title, book.id);
 	createBookCover(bookCover, book.cover, book.title);
 	createBookTitle(bookTitle, book.title);
-	bookDetail.classList.add("__detail");
 	createBookVol(bookVol, book.vol);
 	createBookAuthor(bookAuthor, book.author);
 	createBookLink(bookLinkContainer, bookLink, book.link);
-	createMarkAsRead(markContainer, bookReadCheckbox, bookReadLabel);
+	createMarkAsRead(markContainer, bookReadCheckbox, bookReadLabel, book);
+	createEditBtn(bookEditBtn, book.id);
+
+	bookDetail.classList.add("__detail");
+	bookDetail.append(bookVol, bookAuthor, bookLinkContainer);
+
+	bookCard.append(
+		bookCheckbox,
+		bookCover,
+		bookTitle,
+		bookDetail,
+		markContainer,
+		bookEditBtn,
+	);
+	bookContainer.appendChild(bookCard);
 }
 
 function createBookCard(elem, id) {
@@ -1219,12 +1176,12 @@ function createBookTitle(elem, title) {
 
 function createBookVol(elem, vol) {
 	elem.classList.add("__vol", "overflow-hidden");
-	elem.textContent = `Vol: ${vol}`;
+	inputValue(elem, "__vol", vol);
 }
 
 function createBookAuthor(elem, author) {
 	elem.classList.add("__author", "overflow-hidden");
-	elem.textContent = `Author: ${author}`;
+	inputValue(elem, "__author", author);
 }
 
 function createBookLink(container, elem, link) {
@@ -1247,15 +1204,46 @@ function createBookLink(container, elem, link) {
 	container.appendChild(elem);
 }
 
-function createMarkAsRead(container, input, label, id) {
+function createMarkAsRead(container, input, label, book) {
 	container.classList.add("__mark");
 	input.classList.add("__read-check");
-	input.id = id;
+	input.id = book.id;
 	input.type = "checkbox";
+	input.checked = book.markAsRead;
 	label.classList.add("__text");
-	label.setAttribute("for", id);
+	label.setAttribute("for", book.id);
 	label.textContent = "Mark as read.";
 	container.append(input, label);
+
+	input.addEventListener("change", saveRead);
 }
 
-function createEditBtn(elem) {}
+function createEditBtn(elem, id) {
+	elem.classList.add("btn", "__edit", "hidden");
+	elem.type = "button";
+	elem.commandForElement = addBookModal;
+	elem.command = "show-modal";
+	elem.dataset.id = id;
+	elem.textContent = "Edit";
+	elem.addEventListener("click", editBook);
+}
+
+function inputValue(elem, __class, value) {
+	const rawDetail = __class.replaceAll(/__/g, "");
+	const detail = rawDetail.slice(0, 1).toLocaleUpperCase() + rawDetail.slice(1);
+
+	const text = value ? value : "none";
+
+	if (__class === "__title") {
+		elem.textContent = text;
+	} else {
+		elem.textContent = `${detail}: ${text}`;
+	}
+}
+
+function saveRead(input) {
+	const checkbox = input.currentTarget;
+	const book = myLibrary.findIndex((book) => book.id === checkbox.id);
+	myLibrary[book].markAsRead = checkbox.checked;
+	localStorage.setItem("localLibrary", JSON.stringify(myLibrary));
+}

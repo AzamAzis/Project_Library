@@ -1087,27 +1087,40 @@ function searchBook(btn) {
 	const currentBookItems = [...currentBooks];
 
 	const keyword = searchInput.value.toLowerCase();
-	const bookIndex =
-		myLibrary.findIndex((book) => book.title.toLowerCase().includes(keyword));
-	const bookInLibrary = myLibrary[bookIndex];
+	const isBookInLibrary =
+		myLibrary.some((book) => book.title.includes(keyword));
+	;
+	const bookInLibrary =
+		myLibrary.filter((book) => book.title.includes(keyword));
+	;
 
 	addBookBtn.classList.add("hidden");
 
-	currentBookItems.forEach((book, index) => {
-		const bookTitle = myLibrary[index].title.toLowerCase();
+	currentBookItems.forEach((book) => {
+		const bookCardTitle = searchTitle(book);
 
-		if (!bookTitle.includes(keyword)) {
+		if (!bookCardTitle.includes(keyword)) {
 			book.classList.add("invincible-book");
-		}
-
-		const notDisplayed =
-			currentBookItems.every((book) => book.classList.contains("invincible-book"));
-
-		if (notDisplayed && bookInLibrary) {
-			createBook(bookInLibrary);
+		} else if (bookCardTitle.includes(keyword) && book.classList.contains("invincible-book")) {
+			book.classList.remove("invincible-book");
 		}
 	});
+
+	const notAllBooks =
+	currentBookItems.every((book) => book.classList.contains("invincible-book"))
+	;
+
+	if (notAllBooks && isBookInLibrary) {
+		bookInLibrary.forEach((book) => {
+			createBook(book);
+		});
+	}
 }
+
+function searchTitle(book) {
+	return book.querySelector(".__title").textContent.toLowerCase();
+}
+
 
 function createBook(book) {
 	const bookCard = document.createElement("li");

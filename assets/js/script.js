@@ -25,7 +25,7 @@ const searchInput = document.querySelector(".__search");
 const searchBtn = document.querySelector(".__search-btn");
 const clearBtn = document.querySelector(".__clear");
 
-const screen = window.matchMedia("(width < 680px)");
+const screens = window.matchMedia("(width < 680px)");
 
 const controller = new AbortController();
 
@@ -79,7 +79,7 @@ let isRemoved = true;
 for (let i = 0; i < 6; i++) {
 	const book = myLibrary[i];
 
-	if (!book) break;
+	if (!book) continue;
 
 	createBook(book);
 }
@@ -97,18 +97,16 @@ let initialBookContainerHeight = getBookContainerHeight(
 
 // ||RESPONSIVENESS
 toResponsive();
-screen.addEventListener("change", toResponsive);
+screens.addEventListener("change", toResponsive);
 
 showMoreBtn.addEventListener("click", showMore);
 
 // ||SEARCH
-searchInput.addEventListener("input", () => {
-	if (clearBtn.classList.contains("hidden")) {
+searchInput.addEventListener("input", (elem) => {
+	if (elem.currentTarget.value) {
 		removeSynchronously(clearBtn, "hidden", "__clear-visible");
-	}
-
-	if (!searchInput.value) {
-		removeSlowly(clearBtn, "__clear-visible", "hidden");
+	} else {
+		removeSlowly(clearBtn, "__clear-visible");
 	}
 });
 
@@ -202,7 +200,7 @@ checkboxItems.forEach((item) => {
 
 // ||FUNCTIONS
 function toResponsive() {
-	const smallScreen = screen.matches;
+	const smallScreen = screens.matches;
 
 	if (smallScreen) {
 		initialBookContainerHeight = getBookContainerHeight(
@@ -217,29 +215,73 @@ function toResponsive() {
 			isRemoved = true;
 		}
 
-		window.addEventListener("scroll", () => {
-			const currentBooks = bookContainer.querySelectorAll(".book");
-			const currentBookItems = [...currentBooks];
-			const secondBookLocation = currentBookItems[1].getBoundingClientRect().y;
-			if (nextDisplay > 1 && window.scrollY > secondBookLocation) {
-				upBtn.classList.remove("hidden");
-			} else if (
-				window.scrollY < secondBookLocation &&
-				!upBtn.classList.contains("go-up")
-			) {
-				upBtn.classList.add("hidden");
-			}
-		});
+		removeUpBtn();
+
+		window.addEventListener("scroll", showUpBtn);
 
 		showMoreBtn.classList.remove("hidden");
 		setHeight(bookContainer, initialBookContainerHeight);
 		overflowHide(bookContainer);
 		hideBook();
+
+		removeShowBtn();
+		clearBtn.addEventListener("click", removeShowBtn);
 	} else {
 		showMoreBtn.classList.add("hidden");
 		unsetHeight(bookContainer);
 		overflowUnHide(bookContainer);
 		unHideBook();
+		removeUpBtn();
+
+		window.addEventListener("scroll", showUpBtn);
+
+		upBtn.addEventListener("mouseover", () => {
+			upIcon.src = "assets/img/other/boy-up.png";
+		});
+	}
+}
+
+function removeShowBtn() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	if (currentBooks.length <= 1 && screens.matches) {
+		showMoreBtn.classList.add("hidden");
+	} else {
+		showMoreBtn.classList.remove("hidden");
+	}
+
+	clearBtn.removeEventListener("click", removeShowBtn);
+}
+
+function removeUpBtn() {
+	if (!upBtn.classList.contains("hidden")) {
+		upBtn.classList.add("hidden");
+	}
+}
+
+function showUpBtn() {
+	let location;
+	const currentBooks = bookContainer.querySelectorAll(".book");
+
+	if (screens.matches) {
+		location = 2;
+	} else {
+		location = 6;
+	}
+
+	if (
+		!currentBooks[location] ||
+		currentBooks[location].classList.contains("invincible-book")
+	) return;
+
+	const bookLocation = currentBooks[location].getBoundingClientRect().y;
+
+	if (window.scrollY > bookLocation) {
+		upBtn.classList.remove("hidden");
+	} else if (
+		window.scrollY < bookLocation &&
+		!upBtn.classList.contains("go-up")
+	) {
+		upBtn.classList.add("hidden");
 	}
 }
 
@@ -452,7 +494,7 @@ function addBook(event) {
 	if (
 		showMoreBtn.classList.contains("hidden") &&
 		myLibrary.length > 1 &&
-		screen.matches
+		screens.matches
 	) {
 		showMoreBtn.classList.remove("hidden");
 	}
@@ -483,11 +525,7 @@ function addBook(event) {
 }
 
 function alert() {
-	addedMessage.classList.remove("hidden");
-
-	setTimeout(() => {
-		addedMessage.classList.add("alert");
-	});
+	removeSynchronously(addedMessage, "hidden", "alert");
 
 	setTimeout(stopAlert, 5000);
 }
@@ -853,10 +891,13 @@ function removeBook() {
 		}
 	});
 
-	if (nextDisplay === myLibrary.length) {
+	if (nextDisplay === currentBooks.length) {
 		showMoreBtn.textContent = "Show Less";
 
-		resizeBookContainerHeight(currentBookItems);
+		const updatedCurrentBooks = bookContainer.querySelectorAll(".book");
+		const updatedCurrentBookItems = [...updatedCurrentBooks].filter((book) => !book.classList.contains("hidden"));
+
+		resizeBookContainerHeight(updatedCurrentBookItems);
 	}
 
 	uncheckAllBtn.disabled = true;
@@ -865,7 +906,7 @@ function removeBook() {
 
 function resizeBookContainerHeight(currentBook) {
 	const totalBookHeight = currentBook.reduce(sumHeight, 0);
-	const currentTotalBook = bookContainerGap * (myLibrary.length - 1);
+	const currentTotalBook = bookContainerGap * currentBook.length;
 	bookContainer.style.height = `${totalBookHeight + currentTotalBook}px`;
 }
 
@@ -1067,58 +1108,64 @@ function hideBoy() {
 }
 
 function clearSearch(item) {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+
 	if (searchInput.value) {
 		searchInput.value = "";
 	}
 
-	removeSlowly(item.currentTarget, "__clear-visible", "hidden");
+	removeSlowly(item.currentTarget, "__clear-visible");
+
+	currentBooks.forEach((book) => {
+		book.remove();
+	});
+
+	for (let i = 0; i < 6; i++) {
+		if (!myLibrary[i]) continue;
+		createBook(myLibrary[i]);
+	}
+
+	const currentBookItems = [...bookContainer.querySelectorAll(".book")];
+
+	resizeBookContainerHeight(currentBookItems);
 }
 
-function removeSlowly(item, class1, class2) {
+function removeSlowly(item, class1) {
 	item.classList.remove(class1);
-	item.addEventListener("transitionend", (event) => {
-		event.currentTarget.classList.add(class2);
-	});
+	item.addEventListener("transitionend", addClassEvent);
+}
+
+function addClassEvent(e) {
+	e.currentTarget.classList.add("hidden");
+	e.currentTarget.removeEventListener("transitionend", addClassEvent);
 }
 
 function searchBook(btn) {
 	btn.preventDefault();
-	const currentBooks = bookContainer.querySelectorAll(".book");
-	const currentBookItems = [...currentBooks];
+	if (!searchInput.value) return;
 
-	const keyword = searchInput.value.toLowerCase();
+	const currentBooks = bookContainer.querySelectorAll(".book");
 	const isBookInLibrary =
-		myLibrary.some((book) => book.title.includes(keyword));
+		myLibrary.some(searchBookTitle);
 	;
 	const bookInLibrary =
-		myLibrary.filter((book) => book.title.includes(keyword));
+		myLibrary.filter(searchBookTitle);
 	;
 
-	addBookBtn.classList.add("hidden");
+	for (let i = currentBooks.length - 1; i >= 0; i--) {
+		currentBooks[i].remove();
+	}
 
-	currentBookItems.forEach((book) => {
-		const bookCardTitle = searchTitle(book);
-
-		if (!bookCardTitle.includes(keyword)) {
-			book.classList.add("invincible-book");
-		} else if (bookCardTitle.includes(keyword) && book.classList.contains("invincible-book")) {
-			book.classList.remove("invincible-book");
-		}
-	});
-
-	const notAllBooks =
-	currentBookItems.every((book) => book.classList.contains("invincible-book"))
-	;
-
-	if (notAllBooks && isBookInLibrary) {
+	if (isBookInLibrary) {
 		bookInLibrary.forEach((book) => {
 			createBook(book);
 		});
 	}
 }
 
-function searchTitle(book) {
-	return book.querySelector(".__title").textContent.toLowerCase();
+function searchBookTitle(book) {
+	const keyword = searchInput.value.toLocaleLowerCase();
+	return book.title.toLocaleLowerCase().includes(keyword);
 }
 
 

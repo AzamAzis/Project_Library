@@ -71,8 +71,8 @@ const localLibrary = JSON.parse(localStorage.getItem("localLibrary"));
 
 const myLibrary = localLibrary ? localLibrary : [bookOne, bookTwo, bookThree];
 
-let currentDisplay = 0;
-let nextDisplay = 1;
+const currentDisplay = 0;
+const nextDisplay = 1;
 let isRemoved = true;
 
 // ||DISPLAY BOOKS
@@ -207,8 +207,6 @@ function toResponsive() {
 			initialBookHeight,
 			bookContainerGap,
 		);
-		currentDisplay = 0;
-		nextDisplay = 1;
 
 		if (!isRemoved) {
 			createPreviewText(preview);
@@ -285,46 +283,62 @@ function showUpBtn() {
 	}
 }
 
+function makeBookInvincible() {
+	const currentBooks = bookContainer.querySelectorAll(".book");
+	const currentBookItems = [...currentBooks].filter(checkUnHiddenBooks);
+	currentBookItems.forEach((book, index) => {
+		if (index !== 0) {
+			book.classList.add("invincible-book");
+		}
+	});
+
+	bookContainer.removeEventListener("transitionend", makeBookInvincible);
+}
+
 function showMore() {
-	currentDisplay++;
-	nextDisplay++;
-	const nextBook = getNextBook(currentDisplay);
 	const currentBooks = bookContainer.querySelectorAll(".book");
 	const currentBookItems = [...currentBooks];
 
-	if (
-		!(nextDisplay > currentBookItems.length) &&
-		nextBook.classList.contains("invincible-book")
-	) {
-		nextBook.classList.remove("invincible-book");
+	if (showMoreBtn.textContent === "Show Less") {
+		showMoreBtn.textContent = "Show More";
+		initialBookContainerHeight =
+			getBookContainerHeight(initialBookHeight, bookContainerGap);
+		;
+		setHeight(bookContainer, initialBookContainerHeight);
+		bookContainer.addEventListener("transitionend", makeBookInvincible);
 	}
 
-	if (nextDisplay <= currentBookItems.length) {
-		const height = getBookHeight(nextBook) + bookContainerGap;
+	const hiddenBooks =
+		currentBookItems.filter(checkBookInvincibility);
+	;
+
+	if (!hiddenBooks[0]) return;
+	hiddenBooks[0].classList.remove("invincible-book");
+
+	const visibleBooks =
+		currentBookItems.filter(checkBookVisibility);
+	;
+
+	if (visibleBooks.length <= currentBookItems.length) {
+		const height = getBookHeight(hiddenBooks[0]) + bookContainerGap;
+		initialBookContainerHeight =
+			getBookHeight(bookContainer);
+		;
 		initialBookContainerHeight += height;
 		setHeight(bookContainer, initialBookContainerHeight);
 	}
 
-	if (!isRemoved) {
-		bookContainer.removeEventListener("transitionend", hideBook);
-		isRemoved = true;
-	}
-
-	if (nextDisplay === currentBookItems.length) {
+	if (visibleBooks.length === currentBookItems.length) {
 		showMoreBtn.textContent = "Show Less";
-	} else if (nextDisplay > currentBookItems.length) {
-		showMoreBtn.textContent = "Show More";
-		currentDisplay = 0;
-		nextDisplay = 1;
-		initialBookContainerHeight = getBookContainerHeight(
-			initialBookHeight,
-			bookContainerGap,
-		);
-		setHeight(bookContainer, initialBookContainerHeight);
-		bookContainer.addEventListener("transitionend", hideBook);
-		isRemoved = false;
-		upBtn.classList.add("hidden");
 	}
+}
+
+function checkBookInvincibility(book) {
+	return book.classList.contains("invincible-book");
+}
+
+function checkBookVisibility(book) {
+	return !book.classList.contains("invincible-book");
 }
 
 function hideBook() {
@@ -808,6 +822,7 @@ function cancelUpdate() {
 		updatedReadCheckInput.checked = book.markAsRead;
 
 		if (isTemporalRemoved) {
+			item.classList.add("invincible-book");
 			item.classList.remove("hidden");
 		}
 	});
@@ -816,12 +831,16 @@ function cancelUpdate() {
 		removeBtn.disabled = true;
 	}
 
-	if (isAllTemporalRemoved) {
+	if ((showMoreBtn.classList.contains("hidden")) || isAllTemporalRemoved) {
 		showMoreBtn.classList.remove("hidden");
 	}
 
 	if (nextDisplay === myLibrary.length) {
 		resizeBookContainerHeight(currentBookItems);
+	}
+
+	if (showMoreBtn.textContent === "Show Less") {
+		showMoreBtn.textContent = "Show More";
 	}
 
 	finishUpdate();
@@ -866,6 +885,12 @@ function removeBook() {
 	const currentBookItems = [...currentBooks];
 	const currentCheckboxes = bookContainer.querySelectorAll(".__checkbox");
 	const currentCheckboxItems = [...currentCheckboxes];
+	const nextBook =
+		currentBookItems.filter(checkBookInvincibility)
+	;
+	const visibleBook =
+		currentBookItems.filter(checkBookVisibility);
+	;
 
 	currentCheckboxItems.forEach((item) => {
 		const isCheckTrue = item.checked;
@@ -877,11 +902,19 @@ function removeBook() {
 		if (!isCheckTrue) return;
 		currentBookCard.classList.add("hidden");
 
+		if (nextBook[0]) {
+			nextBook[0].classList.remove("invincible-book");
+		}
+
 		const isAllTemporalRemoved = currentBookItems.every((book) =>
 			book.classList.contains("hidden"),
 		);
 
-		if (isAllTemporalRemoved) {
+		const notTemporalRemovedBooks =
+			currentBookItems.filter(checkUnHiddenBooks);
+		;
+
+		if ((notTemporalRemovedBooks.length === 1) || isAllTemporalRemoved) {
 			showMoreBtn.classList.add("hidden");
 		}
 
@@ -891,17 +924,21 @@ function removeBook() {
 		}
 	});
 
-	if (nextDisplay === currentBooks.length) {
+	if (visibleBook.length === currentBooks.length) {
 		showMoreBtn.textContent = "Show Less";
 
 		const updatedCurrentBooks = bookContainer.querySelectorAll(".book");
-		const updatedCurrentBookItems = [...updatedCurrentBooks].filter((book) => !book.classList.contains("hidden"));
+		const updatedCurrentBookItems = [...updatedCurrentBooks].filter(checkUnHiddenBooks);
 
 		resizeBookContainerHeight(updatedCurrentBookItems);
 	}
 
 	uncheckAllBtn.disabled = true;
 	confirmBtn.disabled = false;
+}
+
+function checkUnHiddenBooks(book) {
+	return !book.classList.contains("hidden");
 }
 
 function resizeBookContainerHeight(currentBook) {
@@ -1128,6 +1165,29 @@ function clearSearch(item) {
 	const currentBookItems = [...bookContainer.querySelectorAll(".book")];
 
 	resizeBookContainerHeight(currentBookItems);
+
+	if (screens.matches) {
+		initialBookContainerHeight =
+			getBookContainerHeight(initialBookHeight, bookContainerGap);
+		;
+		setHeight(bookContainer, initialBookContainerHeight);
+		currentBookItems.forEach((book, index) => {
+			if (index !== 0) {
+				book.classList.add("invincible-book");
+			}
+		});
+
+		const updatedCurrentBookItems = currentBookItems.filter(checkBookVisibility);
+
+		if (updatedCurrentBookItems.length < currentBookItems.length) {
+			if (showMoreBtn.textContent === "Show Less") {
+				showMoreBtn.textContent = "Show More";
+			}
+			if (showMoreBtn.classList.contains("hidden")) {
+				showMoreBtn.classList.remove("hidden");
+			}
+		}
+	}
 }
 
 function removeSlowly(item, class1) {
@@ -1161,13 +1221,21 @@ function searchBook(btn) {
 			createBook(book);
 		});
 	}
+
+	if (bookContainer.style.overflow) {
+		const currentBookItems = [...bookContainer.querySelectorAll(".book")];
+		resizeBookContainerHeight(currentBookItems);
+	}
+
+	if (!showMoreBtn.classList.contains("hidden")) {
+		showMoreBtn.classList.add("hidden");
+	}
 }
 
 function searchBookTitle(book) {
 	const keyword = searchInput.value.toLocaleLowerCase();
 	return book.title.toLocaleLowerCase().includes(keyword);
 }
-
 
 function createBook(book) {
 	const bookCard = document.createElement("li");

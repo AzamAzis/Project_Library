@@ -107,6 +107,7 @@ searchInput.addEventListener("input", (elem) => {
 		removeSynchronously(clearBtn, "hidden", "__clear-visible");
 	} else {
 		removeSlowly(clearBtn, "__clear-visible");
+		clearKeyword();
 	}
 });
 
@@ -241,10 +242,14 @@ function toResponsive() {
 
 function removeShowBtn() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
-	if (currentBooks.length <= 1 && screens.matches) {
-		showMoreBtn.classList.add("hidden");
+	if (currentBooks.length <= 1) {
+		if (screens.matches) {
+			showMoreBtn.classList.add("hidden");
+		}
 	} else {
-		showMoreBtn.classList.remove("hidden");
+		if (screens.matches) {
+			showMoreBtn.classList.remove("hidden");
+		}
 	}
 
 	clearBtn.removeEventListener("click", removeShowBtn);
@@ -930,7 +935,9 @@ function removeBook() {
 		const updatedCurrentBooks = bookContainer.querySelectorAll(".book");
 		const updatedCurrentBookItems = [...updatedCurrentBooks].filter(checkUnHiddenBooks);
 
-		resizeBookContainerHeight(updatedCurrentBookItems);
+		if (screens.matches) {
+			resizeBookContainerHeight(updatedCurrentBookItems);
+		}
 	}
 
 	uncheckAllBtn.disabled = true;
@@ -1144,14 +1151,12 @@ function hideBoy() {
 	}
 }
 
-function clearSearch(item) {
+function clearKeyword() {
 	const currentBooks = bookContainer.querySelectorAll(".book");
 
-	if (searchInput.value) {
-		searchInput.value = "";
+	if (addBookBtn.classList.contains("hidden")) {
+		addBookBtn.classList.remove("hidden");
 	}
-
-	removeSlowly(item.currentTarget, "__clear-visible");
 
 	currentBooks.forEach((book) => {
 		book.remove();
@@ -1164,9 +1169,8 @@ function clearSearch(item) {
 
 	const currentBookItems = [...bookContainer.querySelectorAll(".book")];
 
-	resizeBookContainerHeight(currentBookItems);
-
 	if (screens.matches) {
+		resizeBookContainerHeight(currentBookItems);
 		initialBookContainerHeight =
 			getBookContainerHeight(initialBookHeight, bookContainerGap);
 		;
@@ -1188,6 +1192,17 @@ function clearSearch(item) {
 			}
 		}
 	}
+}
+
+function clearSearch(item) {
+	removeSlowly(item.currentTarget, "__clear-visible");
+
+	if (searchInput.value) {
+		searchInput.value = "";
+	}
+
+	clearKeyword();
+
 }
 
 function removeSlowly(item, class1) {
@@ -1212,6 +1227,8 @@ function searchBook(btn) {
 		myLibrary.filter(searchBookTitle);
 	;
 
+	addBookBtn.classList.add("hidden");
+
 	for (let i = currentBooks.length - 1; i >= 0; i--) {
 		currentBooks[i].remove();
 	}
@@ -1224,7 +1241,9 @@ function searchBook(btn) {
 
 	if (bookContainer.style.overflow) {
 		const currentBookItems = [...bookContainer.querySelectorAll(".book")];
-		resizeBookContainerHeight(currentBookItems);
+		if (screens.matches) {
+			resizeBookContainerHeight(currentBookItems);
+		}
 	}
 
 	if (!showMoreBtn.classList.contains("hidden")) {

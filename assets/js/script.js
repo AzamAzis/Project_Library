@@ -442,6 +442,11 @@ function addBook(event) {
 	}
 
 	createBookCard(newBookCard, randomId);
+
+	if (screens.matches) {
+		newBookCard.classList.add("invincible-book");
+	}
+
 	createBookCheckbox(newCheckbox, titleInput.value, newBookCard.dataset.id);
 
 	if (!isCoverExist) {
